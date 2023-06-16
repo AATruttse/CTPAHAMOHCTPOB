@@ -5,6 +5,7 @@
 #include "screen.h"
 
 char get_cell_char(struct MapCell _cell) {
+    /* non-explored map cells shown blank*/
     if (!_cell.is_explored) {
         return ' ';
     }
