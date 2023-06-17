@@ -69,7 +69,9 @@ void hero_step(enum E_DIR _dir) {
     if (g_Map[target_y][target_x].type == ECT_MOUNTAIN) {
         return;
     }
-
+    if (g_Map[target_y][target_x].type == ECT_LAKE || g_Map[target_y][target_x].type == ECT_RIVER) {
+        return;
+    }
     g_Hero.map_x = target_x;
     g_Hero.map_y = target_y;
 }
