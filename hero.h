@@ -4,8 +4,8 @@
 #include "common.h"
 
 struct Hero {
-    int map_x;
-    int map_y;
+    unsigned int map_x;
+    unsigned int map_y;
 };
 
 struct Hero g_Hero;

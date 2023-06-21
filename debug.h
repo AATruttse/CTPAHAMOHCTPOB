@@ -11,6 +11,8 @@ bool g_Debug;
 
 void debug_draw();
 
+void debug_log(char *_debug_string);
+
 #endif // DEBUG
 
 #endif // DEBUG_H_INCLUDED

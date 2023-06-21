@@ -42,8 +42,8 @@ int colornum(int fg, int bg)
 void init_colorpairs(void)
 {
     int colorpair;
-    for (int bg = 0; bg <= 7; bg++) {
-        for (int fg = 0; fg <= 7; fg++) {
+    for (size_t bg = 0; bg <= 7; bg++) {
+        for (size_t fg = 0; fg <= 7; fg++) {
             colorpair = colornum(fg, bg);
             init_pair(colorpair, curs_color(fg), curs_color(bg));
         }
@@ -83,8 +83,8 @@ void sc_flushBuf() {
 
     clear();
 
-    for (int i = 0; i < SC_HEIGHT; i++) {
-        for (int j = 0; j < SC_WIDTH; j++) {
+    for (size_t i = 0; i < SC_HEIGHT; i++) {
+        for (size_t j = 0; j < SC_WIDTH; j++) {
             setcolor(g_scrBuf[i][j].ch_color, g_scrBuf[i][j].bg_color);
             mvaddch(i , j, g_scrBuf[i][j].ch);
             unsetcolor(g_scrBuf[i][j].ch_color, g_scrBuf[i][j].bg_color);

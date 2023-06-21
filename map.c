@@ -64,13 +64,13 @@ short get_cell_color(struct MapCell _cell) {
 }
 
 bool is_right_type(enum E_CellType _type,
-                    int _rightTypes_size,
+                    size_t _rightTypes_size,
                     enum E_CellType *_rightTypes) {
     if (_rightTypes_size < 1 || _rightTypes == NULL) {
             return false;
     }
 
-    for (int i = 0; i < _rightTypes_size; i++) {
+    for (size_t i = 0; i < _rightTypes_size; i++) {
         if (_type == _rightTypes[i]) {
             return true;
         }
@@ -79,14 +79,14 @@ bool is_right_type(enum E_CellType _type,
     return false;
 };
 
-int map_change_cell_type_recursive(
+size_t map_change_cell_type_recursive(
         enum E_CellType _type,
-        int _chance,
-        int* p_curSize,
-        int _maxSize,
-        int _x,
-        int _y,
-        int _typesRemoved_size,
+        unsigned int _chance,
+        size_t* p_curSize,
+        size_t _maxSize,
+        unsigned int _x,
+        unsigned int _y,
+        size_t _typesRemoved_size,
         enum E_CellType *_typesRemoved,
         bool _is_first) {
     if (_typesRemoved_size < 1 || _typesRemoved == NULL || _chance < 1) {
@@ -130,12 +130,12 @@ int map_change_cell_type_recursive(
     return *p_curSize;
 }
 
-int map_place_spot(
+size_t map_place_spot(
         enum E_CellType _type,
-        int _chance,
-        int _sizeMin,
-        int _sizeMax,
-        int _typesRemoved_size,
+        unsigned int _chance,
+        size_t _sizeMin,
+        size_t _sizeMax,
+        size_t _typesRemoved_size,
         enum E_CellType *_typesRemoved) {
     /* we need to know which cells have to be removed*/
     if (_typesRemoved_size < 1 || _typesRemoved == NULL || _chance < 1) {
@@ -143,10 +143,10 @@ int map_place_spot(
     }
 
     /* calculate spot's size */
-    int size = _sizeMin + ( rand() % (_sizeMax + 1 - _sizeMin));
+    size_t size = _sizeMin + ( rand() % (_sizeMax + 1 - _sizeMin));
 
-    int start_x, start_y;
-    int num_tries = 0;
+    unsigned int start_x, start_y;
+    size_t num_tries = 0;
 
     /* find cell with needed type*/
     do {
@@ -161,7 +161,7 @@ int map_place_spot(
         num_tries++;
     } while (!is_right_type(g_Map[start_y][start_x].type, _typesRemoved_size, _typesRemoved));
 
-    int num_cells = 0;
+    size_t num_cells = 0;
 
     map_change_cell_type_recursive(_type, _chance, &num_cells, size,
                                    start_x, start_y, _typesRemoved_size, _typesRemoved, true);
@@ -170,14 +170,14 @@ int map_place_spot(
 }
 
 void map_init() {
-    int max_height = MAP_HEIGHT - 1;
-    int max_width = MAP_WIDTH - 1;
+    unsigned int max_height = MAP_HEIGHT - 1;
+    unsigned int max_width = MAP_WIDTH - 1;
 
-    int river_x1 = MAP_WIDTH / 2;
-    int river_x2 = river_x1 + 1;
+    unsigned int river_x1 = MAP_WIDTH / 2;
+    unsigned int river_x2 = river_x1 + 1;
 
-    for (int i = 0; i < MAP_HEIGHT; i++) {
-        for (int j = 0; j < MAP_WIDTH; j++) {
+    for (size_t i = 0; i < MAP_HEIGHT; i++) {
+        for (size_t j = 0; j < MAP_WIDTH; j++) {
             g_Map[i][j].is_explored = false;
             g_Map[i][j].is_visible = false;
 
@@ -202,7 +202,7 @@ void map_init() {
     }
 
     enum E_CellType plains[1] = {ECT_PLAIN};
-    for (int i = 0; i < FOREST_SPOTS_NUM; i++) {
+    for (size_t i = 0; i < FOREST_SPOTS_NUM; i++) {
         map_place_spot(ECT_FOREST,
                     FOREST_SPOTS_CHANCE,
                     FOREST_SPOTS_SIZE_MIN,
@@ -210,7 +210,7 @@ void map_init() {
                     sizeof(plains) / sizeof(enum E_CellType),
                     plains);
     }
-    for (int i = 0; i < HILL_SPOTS_NUM; i++) {
+    for (size_t i = 0; i < HILL_SPOTS_NUM; i++) {
         map_place_spot(ECT_HILL,
                     HILL_SPOTS_CHANCE,
                     HILL_SPOTS_SIZE_MIN,
@@ -223,8 +223,8 @@ void map_init() {
 }
 
 void map_draw() {
-    for (int i = 0; i < MAP_HEIGHT; i++) {
-        for (int j = 0; j < MAP_WIDTH; j++) {
+    for (size_t i = 0; i < MAP_HEIGHT; i++) {
+        for (size_t j = 0; j < MAP_WIDTH; j++) {
             g_scrBuf[i + MAP_Y0][j + MAP_X0].ch = get_cell_char(g_Map[i][j]);
             g_scrBuf[i + MAP_Y0][j + MAP_X0].ch_color = get_cell_color(g_Map[i][j]);
         }

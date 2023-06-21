@@ -16,8 +16,8 @@
 void debug_draw() {
     char debug_buf[DEBUG_HEIGHT][DEBUG_WIDTH];
 
-    for (int i = 0; i < DEBUG_HEIGHT; i++) {
-        for (int j = 0; j < DEBUG_WIDTH; j++) {
+    for (size_t i = 0; i < DEBUG_HEIGHT; i++) {
+        for (size_t j = 0; j < DEBUG_WIDTH; j++) {
             debug_buf[i][j] = ' ';
         }
     }
@@ -27,13 +27,17 @@ void debug_draw() {
         sprintf(debug_buf[2], "    Hero y = %d", g_Hero.map_y);
     }
 
-    for (int i = 0; i < DEBUG_HEIGHT; i++) {
-        for (int j = 0; j < DEBUG_WIDTH; j++) {
+    for (size_t i = 0; i < DEBUG_HEIGHT; i++) {
+        for (size_t j = 0; j < DEBUG_WIDTH; j++) {
             if (debug_buf[i][j]) {
                 g_scrBuf[i + DEBUG_Y0][j + DEBUG_X0].ch = debug_buf[i][j];
             }
         }
     }
+}
+
+void debug_log(char *_debug_string) {
+
 }
 
 #endif // DEBUG

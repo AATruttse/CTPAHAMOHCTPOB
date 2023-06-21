@@ -12,11 +12,11 @@
 
 void hero_init() {
     /* river shores x coordinate */
-    int shore_x1 = (MAP_WIDTH / 2) - 1;
-    int shore_x2 = shore_x1 + 3;
+    unsigned int shore_x1 = (MAP_WIDTH / 2) - 1;
+    unsigned int shore_x2 = shore_x1 + 3;
 
-    int hero_x0 = (rand() % 2) ? shore_x1 : shore_x2;   /* left or right shore? */
-    int hero_y0 = 1 + (rand() % HERO_START_AREA);       /* place on shore */
+    unsigned int hero_x0 = (rand() % 2) ? shore_x1 : shore_x2;   /* left or right shore? */
+    unsigned int hero_y0 = 1 + (rand() % HERO_START_AREA);       /* place on shore */
 
     g_Hero.map_x = hero_x0;
     g_Hero.map_y = hero_y0;
@@ -30,8 +30,8 @@ void hero_draw() {
 }
 
 void hero_step(enum E_DIR _dir) {
-    int target_x = g_Hero.map_x;
-    int target_y = g_Hero.map_y;
+    unsigned int target_x = g_Hero.map_x;
+    unsigned int target_y = g_Hero.map_y;
 
     switch (_dir) {
     case E_DIR_N:
@@ -77,11 +77,11 @@ void hero_step(enum E_DIR _dir) {
 }
 
 void hero_check_visibility() {
-    int distance_sqr;
-    int radius_sqr = (HERO_VISIBILITY_RADIUS + 1) * (HERO_VISIBILITY_RADIUS + 1);
+    unsigned int distance_sqr;
+    unsigned int radius_sqr = (HERO_VISIBILITY_RADIUS + 1) * (HERO_VISIBILITY_RADIUS + 1);
 
-    for (int i = 0; i < MAP_HEIGHT; i++) {
-        for (int j = 0; j < MAP_WIDTH; j++) {
+    for (size_t i = 0; i < MAP_HEIGHT; i++) {
+        for (size_t j = 0; j < MAP_WIDTH; j++) {
             distance_sqr = (g_Hero.map_y - i) * (g_Hero.map_y - i) + (g_Hero.map_x - j) * (g_Hero.map_x - j);
             if (distance_sqr < radius_sqr) {
                     g_Map[i][j].is_explored = true;
