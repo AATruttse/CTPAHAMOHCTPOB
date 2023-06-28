@@ -105,8 +105,8 @@ void sc_init() {
 
     init_colorpairs();
 
-    for (int i = 0; i < SC_HEIGHT; i++) {
-        for (int j = 0; j < SC_WIDTH; j++) {
+    for (size_t i = 0; i < SC_HEIGHT; i++) {
+        for (size_t j = 0; j < SC_WIDTH; j++) {
             g_scrBuf[i][j].ch = ' ';
             g_scrBuf[i][j].bg_color = COLOR_BLACK;
             g_scrBuf[i][j].ch_color = COLOR_WHITE;

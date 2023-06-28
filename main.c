@@ -12,24 +12,24 @@
 #include "screen.h"
 
 void init_all() {
-    srand(time(0));         /* init seed for rand */
+    srand(time(0));         // init seed for rand
 
 #ifdef DEBUG
     g_Debug = true;
 #endif // DEBUG
 
-    initscr();              /* curses init */
-    sc_init();              /* init screen */
-    keypad(stdscr, TRUE);   /* enable KEY_UP/KEY_DOWN/KEY_RIGHT/KEY_LEFT */
-    noecho();               /* turn off the key echo */
+    initscr();              // curses init
+    sc_init();              // init screen
+    keypad(stdscr, TRUE);   // enable KEY_UP/KEY_DOWN/KEY_RIGHT/KEY_LEFT
+    noecho();               // turn off the key echo
 
-    map_init();             /* init map */
-    hero_init();            /* init hero */
+    map_init();             // init map
+    hero_init();            // init hero
 }
 
 void uninit_all() {
-    sc_uninit();            /* uninit screen */
-    endwin();               /* uninit curses */
+    sc_uninit();            // uninit screen
+    endwin();               // uninit curses
 }
 
 int main(int argc, char **argv)

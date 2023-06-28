@@ -10,13 +10,17 @@
 #define HERO_START_AREA 10
 #define HERO_VISIBILITY_RADIUS 3
 
-void hero_init() {
-    /* river shores x coordinate */
-    unsigned int shore_x1 = (MAP_WIDTH / 2) - 1;
-    unsigned int shore_x2 = shore_x1 + 3;
+#define HERO_CHARACTER '@'
 
-    unsigned int hero_x0 = (rand() % 2) ? shore_x1 : shore_x2;   /* left or right shore? */
-    unsigned int hero_y0 = 1 + (rand() % HERO_START_AREA);       /* place on shore */
+/////////////////////////////////////////////////
+/// Inits all variables for hero
+/////////////////////////////////////////////////
+void hero_init() {
+    unsigned int shore_x1 = (MAP_WIDTH / 2) - 1;                 // left river's shore x coordinate
+    unsigned int shore_x2 = shore_x1 + 3;                        // right river's shore x coordinate
+
+    unsigned int hero_x0 = (rand() % 2) ? shore_x1 : shore_x2;   // left or right shore?
+    unsigned int hero_y0 = 1 + (rand() % HERO_START_AREA);       // place hero on shore
 
     g_Hero.map_x = hero_x0;
     g_Hero.map_y = hero_y0;
@@ -25,7 +29,7 @@ void hero_init() {
 }
 
 void hero_draw() {
-    g_scrBuf[g_Hero.map_y + MAP_Y0][g_Hero.map_x + MAP_X0].ch = '@';
+    g_scrBuf[g_Hero.map_y + MAP_Y0][g_Hero.map_x + MAP_X0].ch = HERO_CHARACTER;
     g_scrBuf[g_Hero.map_y + MAP_Y0][g_Hero.map_x + MAP_X0].ch_color = COLOR_BRIGHTWHITE;
 }
 

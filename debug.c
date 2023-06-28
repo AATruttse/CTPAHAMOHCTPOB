@@ -1,11 +1,14 @@
 #include "common.h"
 #ifdef DEBUG
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "debug.h"
 #include "hero.h"
 #include "map.h"
 #include "screen.h"
+
+#define LOG_FILE "ctpaha_monctrob.log"
 
 #define DEBUG_X0 (MAP_WIDTH + 1)
 #define DEBUG_Y0 0
@@ -35,9 +38,21 @@ void debug_draw() {
         }
     }
 }
+void debug_init();
+void debug_uninit();
 
 void debug_log(char *_debug_string) {
+    FILE *fptr;
+    fptr = fopen(LOG_FILE, "a");
 
+    if(fptr == NULL)
+    {
+        eprintf("Error! Can't open file %s\n", LOG_FILE);
+        exit(1);
+    }
+
+    fprintf(fptr,"%s\n",_debug_string);
+    fclose(fptr);
 }
 
 #endif // DEBUG
