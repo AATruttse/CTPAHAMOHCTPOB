@@ -5,6 +5,7 @@
 #include "include/curses.h"
 
 #include "common.h"
+#include "daytime.h"
 #include "debug.h"
 #include "hero.h"
 #include "mainloop.h"
@@ -25,6 +26,7 @@ void init_all() {
 
     map_init();             // init map
     hero_init();            // init hero
+    init_time();
 }
 
 void uninit_all() {

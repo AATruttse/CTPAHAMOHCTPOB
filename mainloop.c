@@ -3,6 +3,7 @@
 #include "include/curses.h"
 
 #include "common.h"
+#include "daytime.h"
 #include "debug.h"
 #include "hero.h"
 #include "mainloop.h"
@@ -12,6 +13,8 @@
 void main_draw() {
     map_draw();
     hero_draw();
+
+    draw_time();
 
 #ifdef DEBUG
     debug_draw();

@@ -3,6 +3,7 @@
 #include "include/curses.h"
 
 #include "common.h"
+#include "daytime.h"
 #include "hero.h"
 #include "map.h"
 #include "screen.h"
@@ -30,7 +31,7 @@ void hero_init() {
 
 void hero_draw() {
     g_scrBuf[g_Hero.map_y + MAP_Y0][g_Hero.map_x + MAP_X0].ch = HERO_CHARACTER;
-    g_scrBuf[g_Hero.map_y + MAP_Y0][g_Hero.map_x + MAP_X0].ch_color = COLOR_BRIGHTWHITE;
+    g_scrBuf[g_Hero.map_y + MAP_Y0][g_Hero.map_x + MAP_X0].ch_color = COLOR_BRIGHTRED;
 }
 
 void hero_step(enum E_DIR _dir) {
@@ -78,6 +79,8 @@ void hero_step(enum E_DIR _dir) {
     }
     g_Hero.map_x = target_x;
     g_Hero.map_y = target_y;
+
+    g_DayTime = (g_DayTime + 1) % 24;
 }
 
 void hero_check_visibility() {
