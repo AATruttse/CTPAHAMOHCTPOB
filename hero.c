@@ -39,31 +39,31 @@ void hero_step(enum E_DIR _dir) {
     unsigned int target_y = g_Hero.map_y;
 
     switch (_dir) {
-    case E_DIR_N:
+    case EDIR_N:
         target_y--;
         break;
-    case E_DIR_NE:
+    case EDIR_NE:
         target_x++;
         target_y--;
         break;
-    case E_DIR_E:
+    case EDIR_E:
         target_x++;
         break;
-    case E_DIR_SE:
+    case EDIR_SE:
         target_x++;
         target_y++;
         break;
-    case E_DIR_S:
+    case EDIR_S:
         target_y++;
         break;
-    case E_DIR_SW:
+    case EDIR_SW:
         target_x--;
         target_y++;
         break;
-    case E_DIR_W:
+    case EDIR_W:
         target_x--;
         break;
-    case E_DIR_NW:
+    case EDIR_NW:
         target_x--;
         target_y--;
         break;
@@ -80,7 +80,7 @@ void hero_step(enum E_DIR _dir) {
     g_Hero.map_x = target_x;
     g_Hero.map_y = target_y;
 
-    g_DayTime = (g_DayTime + 1) % 24;
+    time_advance(1);
 }
 
 void hero_check_visibility() {

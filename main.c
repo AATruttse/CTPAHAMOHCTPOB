@@ -26,7 +26,7 @@ void init_all() {
 
     map_init();             // init map
     hero_init();            // init hero
-    init_time();
+    time_init();
 }
 
 void uninit_all() {

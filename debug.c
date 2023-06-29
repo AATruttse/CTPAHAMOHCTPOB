@@ -11,14 +11,14 @@
 #define LOG_FILE "ctpaha_monctrob.log"
 
 #define DEBUG_X0 (MAP_WIDTH + 1)
-#define DEBUG_Y0 0
+#define DEBUG_Y0 20
 
-#define DEBUG_HEIGHT 20
+#define DEBUG_HEIGHT 10
 #define DEBUG_WIDTH 35
 
-void debug_draw() {
-    char debug_buf[DEBUG_HEIGHT][DEBUG_WIDTH];
+char debug_buf[DEBUG_HEIGHT][DEBUG_WIDTH];
 
+void debug_draw() {
     for (size_t i = 0; i < DEBUG_HEIGHT; i++) {
         for (size_t j = 0; j < DEBUG_WIDTH; j++) {
             debug_buf[i][j] = ' ';
@@ -38,8 +38,11 @@ void debug_draw() {
         }
     }
 }
-void debug_init();
-void debug_uninit();
+void debug_init() {
+}
+
+void debug_uninit() {
+}
 
 void debug_log(char *_debug_string) {
     FILE *fptr;

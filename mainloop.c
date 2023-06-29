@@ -14,7 +14,7 @@ void main_draw() {
     map_draw();
     hero_draw();
 
-    draw_time();
+    time_draw();
 
 #ifdef DEBUG
     debug_draw();
@@ -27,16 +27,16 @@ bool loop_command() {
     int ch = getch();
     switch (ch) {
         case KEY_UP:
-            hero_step(E_DIR_N);
+            hero_step(EDIR_N);
             break;
         case KEY_DOWN:
-            hero_step(E_DIR_S);
+            hero_step(EDIR_S);
             break;
         case KEY_RIGHT:
-            hero_step(E_DIR_E);
+            hero_step(EDIR_E);
             break;
         case KEY_LEFT:
-            hero_step(E_DIR_W);
+            hero_step(EDIR_W);
             break;
 #ifdef DEBUG
         case 'd':

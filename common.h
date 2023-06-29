@@ -4,14 +4,14 @@
 #define DEBUG
 
 enum E_DIR {
-    E_DIR_N     = 0,
-    E_DIR_NE    = 1,
-    E_DIR_E     = 2,
-    E_DIR_SE    = 3,
-    E_DIR_S     = 4,
-    E_DIR_SW    = 5,
-    E_DIR_W     = 6,
-    E_DIR_NW    = 7
+    EDIR_N     = 0,
+    EDIR_NE    = 1,
+    EDIR_E     = 2,
+    EDIR_SE    = 3,
+    EDIR_S     = 4,
+    EDIR_SW    = 5,
+    EDIR_W     = 6,
+    EDIR_NW    = 7
 };
 
 enum E_CellType {
