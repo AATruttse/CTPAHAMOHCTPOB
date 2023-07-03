@@ -49,21 +49,6 @@ enum E_Auras {
     EA_Occult = 4
 };
 
-enum E_Signs {
-    ES_Lover = 0,
-    ES_Twins = 1,
-    ES_Banner = 2,
-    ES_Bow = 3,
-    ES_Chariot = 4,
-    ES_Horse = 5,
-    ES_Raven = 6,
-    ES_Wolf = 7,
-    ES_Wyrm = 8,
-    ES_Barrow = 9,
-    ES_Hermit = 10,
-    ES_Tower = 11,
-    ES_Guest = 12
-};
 
 
 
