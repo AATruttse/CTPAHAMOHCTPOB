@@ -243,6 +243,29 @@ size_t map_place_spot(
     return num_cells;
 }
 
+void map_place_spots(
+        size_t _numSpots,
+        void (*_placeFunction)(struct MapCell* _pCell),
+        unsigned int _chance,
+        size_t _sizeMin,
+        size_t _sizeMax,
+        size_t _typesRemoved_size,
+        enum E_CellType *_typesRemoved,
+        size_t _humRemoved_size,
+        enum E_CellHumidity *_humRemoved
+        ) {
+    for (size_t i = 0; i < _numSpots; i++) {
+        map_place_spot(_placeFunction,
+                    _chance,
+                    _sizeMin,
+                    _sizeMax,
+                    _typesRemoved_size,
+                    _typesRemoved,
+                    _humRemoved_size,
+                    _humRemoved);
+    }
+}
+
 void map_init() {
     unsigned int max_height = MAP_HEIGHT - 1;
     unsigned int max_width = MAP_WIDTH - 1;
@@ -287,96 +310,50 @@ void map_init() {
     enum E_CellHumidity all_humidities[5] = {ECH_NORMAL, ECH_DRY, ECH_SWAMP, ECH_WATER, ECH_SNOW};
     enum E_CellHumidity all_waters[1] = {ECH_WATER};
 
-    for (size_t i = 0; i < FOREST_SPOTS_NUM; i++) {
-        map_place_spot(place_forest,
-                    FOREST_SPOTS_CHANCE,
-                    FOREST_SPOTS_SIZE_MIN,
-                    FOREST_SPOTS_SIZE_MAX,
-                    sizeof(plains) / sizeof(enum E_CellType),
-                    plains,
-                    sizeof(all_humidities) / sizeof(enum E_CellHumidity),
-                    all_humidities);
-    }
-    for (size_t i = 0; i < HILL_SPOTS_NUM; i++) {
-        map_place_spot(place_hill,
-                    HILL_SPOTS_CHANCE,
-                    HILL_SPOTS_SIZE_MIN,
-                    HILL_SPOTS_SIZE_MAX,
-                    sizeof(plains) / sizeof(enum E_CellType),
-                    plains,
-                    sizeof(all_humidities) / sizeof(enum E_CellHumidity),
-                    all_humidities);
-    }
-    for (size_t i = 0; i < LOWLAND_SPOTS_NUM; i++) {
-        map_place_spot(place_lowland,
-                    LOWLAND_SPOTS_CHANCE,
-                    LOWLAND_SPOTS_SIZE_MIN,
-                    LOWLAND_SPOTS_SIZE_MAX,
-                    sizeof(plains) / sizeof(enum E_CellType),
-                    plains,
-                    sizeof(all_humidities) / sizeof(enum E_CellHumidity),
-                    all_humidities);
-    }
-    for (size_t i = 0; i < MOUNTAIN_SPOTS_NUM; i++) {
-        map_place_spot(place_mountain,
-                    MOUNTAIN_SPOTS_CHANCE,
-                    MOUNTAIN_SPOTS_SIZE_MIN,
-                    MOUNTAIN_SPOTS_SIZE_MAX,
-                    sizeof(hills) / sizeof(enum E_CellType),
-                    hills,
-                    sizeof(all_humidities) / sizeof(enum E_CellHumidity),
-                    all_humidities);
-    }
-    for (size_t i = 0; i < DEADFALL_SPOTS_NUM; i++) {
-        map_place_spot(place_deadfall,
-                    DEADFALL_SPOTS_CHANCE,
-                    DEADFALL_SPOTS_SIZE_MIN,
-                    DEADFALL_SPOTS_SIZE_MAX,
-                    sizeof(forests) / sizeof(enum E_CellType),
-                    forests,
-                    sizeof(all_humidities) / sizeof(enum E_CellHumidity),
-                    all_humidities);
-    }
-    for (size_t i = 0; i < LAKE_SPOTS_NUM; i++) {
-        map_place_spot(place_lake,
-                    LAKE_SPOTS_CHANCE,
-                    LAKE_SPOTS_SIZE_MIN,
-                    LAKE_SPOTS_SIZE_MAX,
-                    sizeof(not_mountains) / sizeof(enum E_CellType),
-                    not_mountains,
-                    sizeof(all_humidities) / sizeof(enum E_CellHumidity),
-                    all_humidities);
-    }
-    for (size_t i = 0; i < SHOAL_SPOTS_NUM; i++) {
-        map_place_spot(place_shoal,
-                    SHOAL_SPOTS_CHANCE,
-                    SHOAL_SPOTS_SIZE_MIN,
-                    SHOAL_SPOTS_SIZE_MAX,
-                    sizeof(lakes_rivers) / sizeof(enum E_CellType),
-                    lakes_rivers,
-                    sizeof(all_waters) / sizeof(enum E_CellHumidity),
-                    all_waters);
-    }
-    for (size_t i = 0; i < SWAMP_SPOTS_NUM; i++) {
-        map_place_spot(place_swamp,
-                    SWAMP_SPOTS_CHANCE,
-                    SWAMP_SPOTS_SIZE_MIN,
-                    SWAMP_SPOTS_SIZE_MAX,
-                    sizeof(swamp_types) / sizeof(enum E_CellType),
-                    swamp_types,
-                    sizeof(normal) / sizeof(enum E_CellHumidity),
-                    normal);
-    }
-    for (size_t i = 0; i < DRY_SPOTS_NUM; i++) {
-        map_place_spot(place_dry,
-                    DRY_SPOTS_CHANCE,
-                    DRY_SPOTS_SIZE_MIN,
-                    DRY_SPOTS_SIZE_MAX,
-                    sizeof(dry_types) / sizeof(enum E_CellType),
-                    dry_types,
-                    sizeof(normal) / sizeof(enum E_CellHumidity),
-                    normal);
-    }
+    map_place_spots(FOREST_SPOTS_NUM, place_forest, FOREST_SPOTS_CHANCE,
+                    FOREST_SPOTS_SIZE_MIN, FOREST_SPOTS_SIZE_MAX,
+                    sizeof(plains) / sizeof(enum E_CellType), plains,
+                    sizeof(all_humidities) / sizeof(enum E_CellHumidity), all_humidities);
+
+    map_place_spots(HILL_SPOTS_NUM, place_hill, HILL_SPOTS_CHANCE,
+                    HILL_SPOTS_SIZE_MIN, HILL_SPOTS_SIZE_MAX,
+                    sizeof(plains) / sizeof(enum E_CellType), plains,
+                    sizeof(all_humidities) / sizeof(enum E_CellHumidity), all_humidities);
+
+    map_place_spots(LOWLAND_SPOTS_NUM, place_lowland, LOWLAND_SPOTS_CHANCE,
+                    LOWLAND_SPOTS_SIZE_MIN, LOWLAND_SPOTS_SIZE_MAX,
+                    sizeof(plains) / sizeof(enum E_CellType), plains,
+                    sizeof(all_humidities) / sizeof(enum E_CellHumidity), all_humidities);
+
+    map_place_spots(MOUNTAIN_SPOTS_NUM, place_mountain, MOUNTAIN_SPOTS_CHANCE,
+                    MOUNTAIN_SPOTS_SIZE_MIN, MOUNTAIN_SPOTS_SIZE_MAX,
+                    sizeof(hills) / sizeof(enum E_CellType), hills,
+                    sizeof(all_humidities) / sizeof(enum E_CellHumidity), all_humidities);
+
+    map_place_spots(DEADFALL_SPOTS_NUM, place_deadfall, DEADFALL_SPOTS_CHANCE,
+                    DEADFALL_SPOTS_SIZE_MIN, DEADFALL_SPOTS_SIZE_MAX,
+                    sizeof(forests) / sizeof(enum E_CellType), forests,
+                    sizeof(all_humidities) / sizeof(enum E_CellHumidity), all_humidities);
+
+    map_place_spots(LAKE_SPOTS_NUM, place_lake, LAKE_SPOTS_CHANCE,
+                    LAKE_SPOTS_SIZE_MIN, LAKE_SPOTS_SIZE_MAX,
+                    sizeof(not_mountains) / sizeof(enum E_CellType), not_mountains,
+                    sizeof(all_humidities) / sizeof(enum E_CellHumidity), all_humidities);
+
+    map_place_spots(SHOAL_SPOTS_NUM, place_shoal, SHOAL_SPOTS_CHANCE,
+                    SHOAL_SPOTS_SIZE_MIN, SHOAL_SPOTS_SIZE_MAX,
+                    sizeof(lakes_rivers) / sizeof(enum E_CellType), lakes_rivers,
+                    sizeof(all_waters) / sizeof(enum E_CellHumidity), all_waters);
+
+    map_place_spots(SWAMP_SPOTS_NUM, place_swamp, SWAMP_SPOTS_CHANCE,
+                    SWAMP_SPOTS_SIZE_MIN, SWAMP_SPOTS_SIZE_MAX,
+                    sizeof(swamp_types) / sizeof(enum E_CellType), swamp_types,
+                    sizeof(normal) / sizeof(enum E_CellHumidity), normal);
+
+    map_place_spots(DRY_SPOTS_NUM, place_dry, DRY_SPOTS_CHANCE,
+                    DRY_SPOTS_SIZE_MIN, DRY_SPOTS_SIZE_MAX,
+                    sizeof(dry_types) / sizeof(enum E_CellType), dry_types,
+                    sizeof(normal) / sizeof(enum E_CellHumidity), normal);
 }
 
 void map_draw() {
