@@ -13,6 +13,7 @@
 #define TIME_HEIGHT 10
 #define TIME_WIDTH  40
 
+#define DAYS_IN_WEEK    7
 #define SECS_IN_HOUR    3600
 #define HOURS_IN_DAY    24
 #define SEC_IN_DAY      (SECS_IN_HOUR * HOURS_IN_DAY)
@@ -34,9 +35,10 @@ char* moon_phases_names[MOON_PHASES_NUM] = {
 
 char* moon_names[MOON_NUM] = { "Heitmena, the White Moon", "Rauthmena, the Blood Moon", "Swartmena, the Black Moon" };
 double moon_periods[MOON_NUM] = { 29.5, 44.1, 77.7 };
-
 double moon_phases[MOON_PHASES_NUM] = { 0.05, 0.2, 0.3, 0.45, 0.55, 0.7, 0.8, 0.95 };
 size_t moon_phases_limits[MOON_NUM][MOON_PHASES_NUM];
+
+char* weekdays_names[DAYS_IN_WEEK] = { "Auzawandag", "Andanahdag", "Stairnodag", "Swartmendag", "Rauthmendag", "Heitmendag", "Sunnodag" };
 
 char time_buf[TIME_HEIGHT][TIME_WIDTH];
 
@@ -59,6 +61,7 @@ void calc_moon_days() {
 void time_init(){
     g_Day = 1;
     g_DayTime = rand() % HOURS_IN_DAY;
+    g_WeekDay = rand() % DAYS_IN_WEEK;
 
     // calc initial position of the moons
     for (size_t i = 0; i < MOON_NUM; i++) {
@@ -82,7 +85,7 @@ void time_draw() {
         }
     }
     sprintf(time_buf[0], "      ASTROLOGY:");
-    sprintf(time_buf[1], " Day %d Time: %02d:00", (int)g_Day, (int)g_DayTime);
+    sprintf(time_buf[1], " Day %d, %s    Time: %02d:00", (int)g_Day, weekdays_names[g_WeekDay], (int)g_DayTime);
     for (size_t i = 0; i < MOON_NUM; i++) {
         sprintf(time_buf[2 + i*2], " %s:", moon_names[i]);
         sprintf(time_buf[3 + i*2], "    %s, %d day", moon_phases_names[g_MoonPhases[i]], (int)g_MoonDay[i]);
@@ -102,6 +105,7 @@ void time_advance(size_t _hours) {
     if ( g_DayTime >= HOURS_IN_DAY ) {
         g_DayTime %= HOURS_IN_DAY;
         g_Day++;
+        g_WeekDay = ((int)g_WeekDay + 1) % DAYS_IN_WEEK;
     }
 
     for (size_t i = 0; i < MOON_NUM; i++) {

@@ -91,11 +91,11 @@ void hero_check_visibility() {
         for (size_t j = 0; j < MAP_WIDTH; j++) {
             distance_sqr = (g_Hero.map_y - i) * (g_Hero.map_y - i) + (g_Hero.map_x - j) * (g_Hero.map_x - j);
             if (distance_sqr < radius_sqr) {
-                    g_Map[i][j].is_explored = true;
-                    g_Map[i][j].is_visible = true;
+                    g_Map[i][j].flags |= EXPLORED_FLAG;
+                    g_Map[i][j].flags |= VISIBLE_FLAG;
             }
             else {
-                    g_Map[i][j].is_visible = false;
+                    g_Map[i][j].flags &= ~VISIBLE_FLAG;
             }
         }
     }

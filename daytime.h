@@ -15,6 +15,17 @@ enum E_MOONPHASES {
     EMP_WANCRESCENT = 7
 };
 
+enum E_WEEKDAYS {
+    EMP_AUZAWANDAG = 0,
+    EMP_ANDANAHDAG = 1,
+    EMP_STAIRNODAG = 2,
+    EMP_SWARTMENDAG = 3,
+    EMP_RAUTHMENDAG = 4,
+    EMP_HEITMENDAG = 5,
+    EWD_SUNNODAG = 6,
+};
+
+enum E_WEEKDAYS g_WeekDay;
 size_t g_Day;
 size_t g_DayTime;
 size_t g_MoonDay[MOON_NUM];

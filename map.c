@@ -5,61 +5,18 @@
 #include "common.h"
 #include "debug.h"
 #include "map.h"
+#include "map_gen.h"
 #include "screen.h"
 
 #define NUM_TRIES_TO_PLACE_SPOT 1000
-#define LOWLAND_SPOTS_NUM          4
-#define LOWLAND_SPOTS_SIZE_MIN     10
-#define LOWLAND_SPOTS_SIZE_MAX     20
-#define LOWLAND_SPOTS_CHANCE       75
 
-#define FOREST_SPOTS_NUM        16
-#define FOREST_SPOTS_SIZE_MIN   10
-#define FOREST_SPOTS_SIZE_MAX   100
-#define FOREST_SPOTS_CHANCE     67
-
-#define HILL_SPOTS_NUM          8
-#define HILL_SPOTS_SIZE_MIN     10
-#define HILL_SPOTS_SIZE_MAX     50
-#define HILL_SPOTS_CHANCE       75
-
-#define MOUNTAIN_SPOTS_NUM          5
-#define MOUNTAIN_SPOTS_SIZE_MIN     2
-#define MOUNTAIN_SPOTS_SIZE_MAX     10
-#define MOUNTAIN_SPOTS_CHANCE       75
-
-#define DEADFALL_SPOTS_NUM          10
-#define DEADFALL_SPOTS_SIZE_MIN     2
-#define DEADFALL_SPOTS_SIZE_MAX     10
-#define DEADFALL_SPOTS_CHANCE       75
-
-#define LAKE_SPOTS_NUM          6
-#define LAKE_SPOTS_SIZE_MIN     1
-#define LAKE_SPOTS_SIZE_MAX     21
-#define LAKE_SPOTS_CHANCE       67
-
-#define SHOAL_SPOTS_NUM          6
-#define SHOAL_SPOTS_SIZE_MIN     1
-#define SHOAL_SPOTS_SIZE_MAX     2
-#define SHOAL_SPOTS_CHANCE       100
-
-#define DRY_SPOTS_NUM          8
-#define DRY_SPOTS_SIZE_MIN     10
-#define DRY_SPOTS_SIZE_MAX     50
-#define DRY_SPOTS_CHANCE       75
-
-#define SWAMP_SPOTS_NUM          8
-#define SWAMP_SPOTS_SIZE_MIN     10
-#define SWAMP_SPOTS_SIZE_MAX     50
-#define SWAMP_SPOTS_CHANCE       75
-
-char get_cell_char(struct MapCell _cell) {
+char get_cell_char(struct MapCell* _pCell) {
     /* non-explored map cells shown blank*/
-    if (!_cell.is_explored && g_Debug) {
+    if (!(_pCell->flags & EXPLORED_FLAG) && g_Debug) {
         return ' ';
     }
 
-    switch (_cell.type) {
+    switch (_pCell->type) {
     case ECT_PLAIN:
         return '"';
     case ECT_LOWLAND:
@@ -83,18 +40,18 @@ char get_cell_char(struct MapCell _cell) {
     return ' ';
 }
 
-short get_cell_color(struct MapCell _cell) {
-    switch (_cell.hum) {
+short get_cell_color(struct MapCell* _pCell) {
+    switch (_pCell->hum) {
     case ECH_NORMAL:
-        return _cell.is_visible ? COLOR_BRIGHTGREEN : COLOR_GREEN;
+        return _pCell->flags & VISIBLE_FLAG ? COLOR_BRIGHTGREEN : COLOR_GREEN;
     case ECH_DRY:
-        return _cell.is_visible ? COLOR_BRIGHTYELLOW : COLOR_YELLOW;
+        return _pCell->flags & VISIBLE_FLAG ? COLOR_BRIGHTYELLOW : COLOR_YELLOW;
     case ECH_SWAMP:
-        return _cell.is_visible ? COLOR_BRIGHTCYAN : COLOR_CYAN;
+        return _pCell->flags & VISIBLE_FLAG ? COLOR_BRIGHTCYAN : COLOR_CYAN;
     case ECH_WATER:
-        return _cell.is_visible ? COLOR_BRIGHTBLUE : COLOR_BLUE;
+        return _pCell->flags & VISIBLE_FLAG ? COLOR_BRIGHTBLUE : COLOR_BLUE;
     case ECH_SNOW:
-        return _cell.is_visible ? COLOR_BRIGHTWHITE : COLOR_WHITE;
+        return _pCell->flags & VISIBLE_FLAG ? COLOR_BRIGHTWHITE : COLOR_WHITE;
     }
 
     return COLOR_BLACK;
@@ -123,28 +80,6 @@ bool is_right_type(enum E_CellType _type,
 
     return false;
 };
-
-void place_type(struct MapCell* _pCell, enum E_CellType _type) { (*_pCell).type = _type; }
-void place_humidity(struct MapCell* _pCell, enum E_CellHumidity _hum) { (*_pCell).hum = _hum; }
-
-void place_forest(struct MapCell* _pCell) { place_type(_pCell, ECT_FOREST); }
-void place_hill(struct MapCell* _pCell) { place_type(_pCell, ECT_HILL); }
-void place_lowland(struct MapCell* _pCell) { place_type(_pCell, ECT_LOWLAND); }
-void place_deadfall(struct MapCell* _pCell) { place_type(_pCell, ECT_DEADFALL); }
-void place_dry(struct MapCell* _pCell) { place_humidity(_pCell, ECH_DRY); }
-void place_swamp(struct MapCell* _pCell) { place_humidity(_pCell, ECH_SWAMP); }
-void place_mountain(struct MapCell* _pCell) {
-    place_type(_pCell, ECT_MOUNTAIN);
-    place_humidity(_pCell, ECH_SNOW);
-}
-void place_lake(struct MapCell* _pCell) {
-    place_type(_pCell, ECT_LAKE);
-    place_humidity(_pCell, ECH_WATER);
-}
-void place_shoal(struct MapCell* _pCell) {
-    place_type(_pCell, ECT_SHOAL);
-    place_humidity(_pCell, ECH_WATER);
-}
 
 size_t map_change_cell_type_recursive(
         void (*_placeFunction)(struct MapCell* _pCell),
@@ -197,7 +132,7 @@ size_t map_change_cell_type_recursive(
 }
 
 size_t map_place_spot(
-        void (*_placeFunction)(struct MapCell* _pCell),
+        void (*_placeFunction)(struct MapCell*),
         unsigned int _chance,
         size_t _sizeMin,
         size_t _sizeMax,
@@ -243,9 +178,9 @@ size_t map_place_spot(
     return num_cells;
 }
 
-void map_place_spots(
+void map_place_n_spots(
         size_t _numSpots,
-        void (*_placeFunction)(struct MapCell* _pCell),
+        void (*_placeFunction)(struct MapCell*),
         unsigned int _chance,
         size_t _sizeMin,
         size_t _sizeMax,
@@ -266,6 +201,15 @@ void map_place_spots(
     }
 }
 
+void map_place_spots() {
+    for (size_t i = 0; i < sizeof(mapSpots) / sizeof(struct MapSpotParams); i++) {
+        map_place_n_spots(mapSpots[i].numSpots, mapSpots[i].placeFunction,
+                    mapSpots[i].chance, mapSpots[i].sizeMin, mapSpots[i].sizeMax,
+                    mapSpots[i].typesRemoved_size, mapSpots[i].typesRemoved,
+                    mapSpots[i].humRemoved_size, mapSpots[i].humRemoved);
+    }
+}
+
 void map_init() {
     unsigned int max_height = MAP_HEIGHT - 1;
     unsigned int max_width = MAP_WIDTH - 1;
@@ -275,8 +219,7 @@ void map_init() {
 
     for (size_t i = 0; i < MAP_HEIGHT; i++) {
         for (size_t j = 0; j < MAP_WIDTH; j++) {
-            g_Map[i][j].is_explored = false;
-            g_Map[i][j].is_visible = false;
+            g_Map[i][j].flags = 0;
 
             /* river from north to south*/
             if (j == river_x1 || j == river_x2) {
@@ -298,69 +241,14 @@ void map_init() {
         }
     }
 
-    enum E_CellType plains[1] = {ECT_PLAIN};
-    enum E_CellType forests[1] = {ECT_FOREST};
-    enum E_CellType hills[1] = {ECT_HILL};
-    enum E_CellType lakes_rivers[2] = {ECT_LAKE, ECT_RIVER};
-    enum E_CellType not_mountains[4] = {ECT_PLAIN, ECT_HILL, ECT_FOREST, ECT_LOWLAND};
-    enum E_CellType dry_types[3] = {ECT_PLAIN, ECT_HILL, ECT_LOWLAND};
-    enum E_CellType swamp_types[3] = {ECT_PLAIN, ECT_FOREST, ECT_LOWLAND};
-
-    enum E_CellHumidity normal[1] = {ECH_NORMAL};
-    enum E_CellHumidity all_humidities[5] = {ECH_NORMAL, ECH_DRY, ECH_SWAMP, ECH_WATER, ECH_SNOW};
-    enum E_CellHumidity all_waters[1] = {ECH_WATER};
-
-    map_place_spots(FOREST_SPOTS_NUM, place_forest, FOREST_SPOTS_CHANCE,
-                    FOREST_SPOTS_SIZE_MIN, FOREST_SPOTS_SIZE_MAX,
-                    sizeof(plains) / sizeof(enum E_CellType), plains,
-                    sizeof(all_humidities) / sizeof(enum E_CellHumidity), all_humidities);
-
-    map_place_spots(HILL_SPOTS_NUM, place_hill, HILL_SPOTS_CHANCE,
-                    HILL_SPOTS_SIZE_MIN, HILL_SPOTS_SIZE_MAX,
-                    sizeof(plains) / sizeof(enum E_CellType), plains,
-                    sizeof(all_humidities) / sizeof(enum E_CellHumidity), all_humidities);
-
-    map_place_spots(LOWLAND_SPOTS_NUM, place_lowland, LOWLAND_SPOTS_CHANCE,
-                    LOWLAND_SPOTS_SIZE_MIN, LOWLAND_SPOTS_SIZE_MAX,
-                    sizeof(plains) / sizeof(enum E_CellType), plains,
-                    sizeof(all_humidities) / sizeof(enum E_CellHumidity), all_humidities);
-
-    map_place_spots(MOUNTAIN_SPOTS_NUM, place_mountain, MOUNTAIN_SPOTS_CHANCE,
-                    MOUNTAIN_SPOTS_SIZE_MIN, MOUNTAIN_SPOTS_SIZE_MAX,
-                    sizeof(hills) / sizeof(enum E_CellType), hills,
-                    sizeof(all_humidities) / sizeof(enum E_CellHumidity), all_humidities);
-
-    map_place_spots(DEADFALL_SPOTS_NUM, place_deadfall, DEADFALL_SPOTS_CHANCE,
-                    DEADFALL_SPOTS_SIZE_MIN, DEADFALL_SPOTS_SIZE_MAX,
-                    sizeof(forests) / sizeof(enum E_CellType), forests,
-                    sizeof(all_humidities) / sizeof(enum E_CellHumidity), all_humidities);
-
-    map_place_spots(LAKE_SPOTS_NUM, place_lake, LAKE_SPOTS_CHANCE,
-                    LAKE_SPOTS_SIZE_MIN, LAKE_SPOTS_SIZE_MAX,
-                    sizeof(not_mountains) / sizeof(enum E_CellType), not_mountains,
-                    sizeof(all_humidities) / sizeof(enum E_CellHumidity), all_humidities);
-
-    map_place_spots(SHOAL_SPOTS_NUM, place_shoal, SHOAL_SPOTS_CHANCE,
-                    SHOAL_SPOTS_SIZE_MIN, SHOAL_SPOTS_SIZE_MAX,
-                    sizeof(lakes_rivers) / sizeof(enum E_CellType), lakes_rivers,
-                    sizeof(all_waters) / sizeof(enum E_CellHumidity), all_waters);
-
-    map_place_spots(SWAMP_SPOTS_NUM, place_swamp, SWAMP_SPOTS_CHANCE,
-                    SWAMP_SPOTS_SIZE_MIN, SWAMP_SPOTS_SIZE_MAX,
-                    sizeof(swamp_types) / sizeof(enum E_CellType), swamp_types,
-                    sizeof(normal) / sizeof(enum E_CellHumidity), normal);
-
-    map_place_spots(DRY_SPOTS_NUM, place_dry, DRY_SPOTS_CHANCE,
-                    DRY_SPOTS_SIZE_MIN, DRY_SPOTS_SIZE_MAX,
-                    sizeof(dry_types) / sizeof(enum E_CellType), dry_types,
-                    sizeof(normal) / sizeof(enum E_CellHumidity), normal);
+    map_place_spots();
 }
 
 void map_draw() {
     for (size_t i = 0; i < MAP_HEIGHT; i++) {
         for (size_t j = 0; j < MAP_WIDTH; j++) {
-            g_scrBuf[i + MAP_Y0][j + MAP_X0].ch = get_cell_char(g_Map[i][j]);
-            g_scrBuf[i + MAP_Y0][j + MAP_X0].ch_color = get_cell_color(g_Map[i][j]);
+            g_scrBuf[i + MAP_Y0][j + MAP_X0].ch = get_cell_char(&(g_Map[i][j]));
+            g_scrBuf[i + MAP_Y0][j + MAP_X0].ch_color = get_cell_color(&(g_Map[i][j]));
         }
     }
 }

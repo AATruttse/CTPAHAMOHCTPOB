@@ -12,7 +12,7 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-std=c17" />
+					<Add option="-std=gnu++17" />
 					<Add option="-g" />
 				</Compiler>
 				<Linker>
@@ -60,6 +60,7 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="map.h" />
+		<Unit filename="map_gen.h" />
 		<Unit filename="screen.c">
 			<Option compilerVar="CC" />
 		</Unit>

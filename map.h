@@ -11,12 +11,14 @@
 #define MAP_X0  0
 #define MAP_Y0  0
 
+#define EXPLORED_FLAG   1
+#define VISIBLE_FLAG    2
+
 struct MapCell {
     enum E_CellType     type;
     enum E_CellHumidity hum;
 
-    bool                is_visible;
-    bool                is_explored;
+    unsigned char       flags;
 };
 
 struct MapCell g_Map[MAP_HEIGHT][MAP_WIDTH];

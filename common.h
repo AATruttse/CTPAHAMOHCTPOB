@@ -34,6 +34,21 @@ enum E_CellHumidity {
     ECH_SNOW    = 4
 };
 
+enum E_MapLayers {
+    EML_Mundane = 0,
+    EML_Astral = 1,
+    EML_Ethereal = 2,
+    EML_Shadow = 3
+};
+
+enum E_Auras {
+    EA_Mundane = 0,
+    EA_Arcane = 1,
+    EA_Divine = 2,
+    EA_Nature = 3,
+    EA_Occult = 4
+};
+
 
 
 #endif // COMMON_H_INCLUDED
