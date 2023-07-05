@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "include/curses.h"
@@ -93,7 +94,7 @@ size_t map_change_cell_type_recursive(
         size_t _humRemoved_size,
         enum E_CellHumidity *_humRemoved,
         bool _is_first) {
-//    dprintf("map_change_cell_type_recursive, type: %d, chance: %d, current size: %d, max size: %d, x: %d, y: %d, is_first: %d", _type, _chance, (int)(*p_curSize), (int)_maxSize, _x, _y, _is_first);
+//    logprintf("map_change_cell_type_recursive, type: %d, chance: %d, current size: %d, max size: %d, x: %d, y: %d, is_first: %d", _type, _chance, (int)(*p_curSize), (int)_maxSize, _x, _y, _is_first);
     if (_typesRemoved_size < 1 || _typesRemoved == NULL || _chance < 1) {
         return 0;
     }
@@ -141,7 +142,7 @@ size_t map_place_spot(
         size_t _humRemoved_size,
         enum E_CellHumidity *_humRemoved
         ) {
-    //dprintf("map_place_spot started, type: %d, chance: %d, sizeMin: %d, sizeMax: %d", _type, _chance, (int)_sizeMin, (int)_sizeMax);
+    //logprintf("map_place_spot started, type: %d, chance: %d, sizeMin: %d, sizeMax: %d", _type, _chance, (int)_sizeMin, (int)_sizeMax);
 
     // we need to know which cells' types and humidities have to be removed
     if (_typesRemoved_size < 1 || _typesRemoved == NULL ||
@@ -252,3 +253,46 @@ void map_draw() {
         }
     }
 }
+
+bool map_save(FILE *fptr) {
+    char cell_char;
+    for (size_t i = 0; i < MAP_HEIGHT; i++) {
+        for (size_t j = 0; j < MAP_WIDTH; j++) {
+            cell_char = g_Map[i][j].type + g_Map[i][j].hum;
+            if (fputc(cell_char, fptr) == EOF) {
+                return false;
+            }
+            if (fputc(g_Map[i][j].flags, fptr) == EOF) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+bool map_load(FILE *fptr) {
+    fgetc(fptr); //dirty hack - read last \n
+
+    char cell_char;
+    char cell_flags;
+    for (size_t i = 0; i < MAP_HEIGHT; i++) {
+        for (size_t j = 0; j < MAP_WIDTH; j++) {
+            cell_char = fgetc(fptr);
+            if( feof(fptr) ) {
+                return false;
+            }
+            cell_flags = fgetc(fptr);
+            if( feof(fptr) ) {
+                return false;
+            }
+            g_Map[i][j].type = 10*(cell_char / 10);
+            g_Map[i][j].hum = cell_char % 10;
+            g_Map[i][j].flags = cell_flags;
+        }
+    }
+
+    return true;
+}
+
+

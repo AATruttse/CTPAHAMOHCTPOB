@@ -114,3 +114,43 @@ void time_advance(size_t _hours) {
 
     calc_moon_days();
 }
+
+bool time_save(FILE *fptr) {
+    fprintf(fptr, "%lu %lu %lu\n", (unsigned long)g_Day, (unsigned long)g_DayTime, (unsigned long)g_WeekDay);
+    if (ferror (fptr)) {
+        return false;
+    }
+    for (size_t i = 0; i < MOON_NUM; i++) {
+        fprintf(fptr, "%lu %lu %lu\n", (unsigned long)g_MoonDay[i], (unsigned long)g_MoonPhases[i], (unsigned long)g_MoonSeconds[i]);
+        if (ferror (fptr)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool time_load(FILE *fptr) {
+    unsigned long temp_day, temp_daytime, temp_weekday, temp_moonday, temp_moonphase, temp_moonseconds;
+    fscanf(fptr, "%lu %lu %lu", &temp_day, &temp_daytime,&temp_weekday);
+    if (ferror (fptr)) {
+        return false;
+    }
+    g_Day = temp_day;
+    g_DayTime = temp_daytime;
+    g_WeekDay = temp_weekday;
+
+    for (size_t i = 0; i < MOON_NUM; i++) {
+        fscanf(fptr, "%lu %lu %lu", &temp_moonday, &temp_moonphase, &temp_moonseconds);
+        if (ferror (fptr)) {
+            return false;
+        }
+
+        g_MoonDay[i] = temp_moonday;
+        g_MoonPhases[i] = temp_moonphase;
+        g_MoonSeconds[i] = temp_moonseconds;
+    }
+
+    return true;
+
+}

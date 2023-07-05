@@ -26,8 +26,8 @@ void debug_draw() {
     }
 
     if (!g_Debug) {
-        sprintf(debug_buf[1], "    Hero x = %d", g_Hero.map_x);
-        sprintf(debug_buf[2], "    Hero y = %d", g_Hero.map_y);
+        sprintf(debug_buf[1], "    Hero x = %lu", (unsigned long)g_Hero.map_x);
+        sprintf(debug_buf[2], "    Hero y = %lu", (unsigned long)g_Hero.map_y);
     }
 
     for (size_t i = 0; i < DEBUG_HEIGHT; i++) {

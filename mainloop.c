@@ -8,6 +8,7 @@
 #include "hero.h"
 #include "mainloop.h"
 #include "map.h"
+#include "savegame.h"
 #include "screen.h"
 
 void main_draw() {
@@ -61,5 +62,7 @@ void main_loop() {
     do {
         main_checks();
         main_draw();
+
+        save_all();
     } while (loop_command());
 }

@@ -10,6 +10,7 @@
 #include "hero.h"
 #include "mainloop.h"
 #include "map.h"
+#include "savegame.h"
 #include "screen.h"
 
 void init_all() {
@@ -24,9 +25,12 @@ void init_all() {
     keypad(stdscr, TRUE);   // enable KEY_UP/KEY_DOWN/KEY_RIGHT/KEY_LEFT
     noecho();               // turn off the key echo
 
-    map_init();             // init map
-    hero_init();            // init hero
-    time_init();
+    if (!load_all()) {
+        map_init();             // init map
+        hero_init();            // init hero
+        time_init();            // init time
+    }
+
 }
 
 void uninit_all() {

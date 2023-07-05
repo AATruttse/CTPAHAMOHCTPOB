@@ -2,6 +2,7 @@
 #define MAP_H_INCLUDED
 
 #include <stdbool.h>
+#include <stdio.h>
 
 #include "common.h"
 
@@ -25,4 +26,6 @@ struct MapCell g_Map[MAP_HEIGHT][MAP_WIDTH];
 
 void map_init();
 void map_draw();
+bool map_save(FILE *fptr);
+bool map_load(FILE *fptr);
 #endif // MAP_H_INCLUDED

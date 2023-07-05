@@ -101,3 +101,25 @@ void hero_check_visibility() {
     }
 }
 
+bool hero_save(FILE *fptr) {
+    fprintf(fptr, "%lu %lu\n", (unsigned long)g_Hero.map_x, (unsigned long)g_Hero.map_y);
+    if (ferror (fptr)) {
+        return false;
+    }
+
+    return true;
+}
+
+bool hero_load(FILE *fptr) {
+    unsigned long temp_x, temp_y;
+    fscanf(fptr, "%lu %lu\n", &temp_x, &temp_y);
+    if (ferror (fptr)) {
+        return false;
+    }
+
+    g_Hero.map_x = temp_x;
+    g_Hero.map_y = temp_y;
+
+    return true;
+}
+

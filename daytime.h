@@ -1,6 +1,8 @@
 #ifndef TIME_H_INCLUDED
 #define TIME_H_INCLUDED
 
+#include <stdbool.h>
+
 #define MOON_NUM 3
 
 enum E_MOONS { EMOON_WHITE = 0, EMOON_RED = 1, EMOON_BLACK = 2 };
@@ -41,8 +43,8 @@ enum E_Signs {
     ES_Guest            = 12
 };
 
-enum E_WEEKDAYS g_WeekDay;
 size_t g_Day;
+enum E_WEEKDAYS g_WeekDay;
 size_t g_DayTime;
 size_t g_MoonDay[MOON_NUM];
 enum E_MOONPHASES g_MoonPhases[MOON_NUM];
@@ -51,4 +53,6 @@ void time_init();
 void time_draw();
 void time_advance(size_t _hours);
 
+bool time_save(FILE *fptr);
+bool time_load(FILE *fptr);
 #endif // TIME_H_INCLUDED
