@@ -10,6 +10,7 @@
 #include "hero.h"
 #include "mainloop.h"
 #include "map.h"
+#include "map_local.h"
 #include "savegame.h"
 #include "screen.h"
 
@@ -26,7 +27,10 @@ void init_all() {
     noecho();               // turn off the key echo
 
     if (!load_all()) {
+        g_Mode = EGM_MAP_GLOBAL;
+
         map_init();             // init map
+        maps_local_init_all();  // init local maps
         hero_init();            // init hero
         time_init();            // init time
     }

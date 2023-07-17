@@ -3,6 +3,16 @@
 
 #define DEBUG
 
+enum E_GAME_MODE {
+    EGM_MAP_GLOBAL  = 0,
+    EGM_MAP_LOCAL   = 10,
+    EGM_DUNGEON     = 20,
+    EGM_CHARACTER   = 30,
+    EGM_INVENTORY   = 40,
+    EGM_MAGIC       = 50,
+    EGM_ASTROLOGY   = 60
+};
+
 enum E_DIR {
     EDIR_N     = 0,
     EDIR_NE    = 1,
@@ -27,11 +37,18 @@ enum E_CellType {
 };
 
 enum E_CellHumidity {
-    ECH_NORMAL  = 0,
-    ECH_DRY     = 1,
-    ECH_SWAMP   = 2,
-    ECH_WATER   = 3,
-    ECH_SNOW    = 4
+    ECH_NORMAL      = 0,
+    ECH_DRY         = 1,
+    ECH_SWAMP       = 2,
+    ECH_WATER       = 3,
+    ECH_SNOW        = 4
+};
+
+enum E_LocalCellType {
+    ELCT_PLAIN      = 0,
+    ELCT_UNDERGROWTH = 10,
+    ELCT_TREE       = 50,
+    ELCT_TREE_W_UG  = 60
 };
 
 enum E_MapLayers {
@@ -49,7 +66,5 @@ enum E_Auras {
     EA_Occult = 4
 };
 
-
-
-
+enum E_GAME_MODE g_Mode;
 #endif // COMMON_H_INCLUDED

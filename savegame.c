@@ -3,10 +3,12 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "common.h"
 #include "daytime.h"
 #include "debug.h"
 #include "hero.h"
 #include "map.h"
+#include "map_local.h"
 #include "savegame.h"
 
 bool check_dir() {
@@ -27,6 +29,28 @@ bool check_dir() {
     return true;
 }
 
+bool save_mode(FILE *fptr) {
+    fprintf(fptr, "%lu\n", (unsigned long)g_Mode);
+    if (ferror (fptr)) {
+        return false;
+    }
+
+    return true;
+}
+
+bool load_mode(FILE *fptr) {
+    unsigned long temp_mode;
+    fscanf(fptr, "%lu\n", &temp_mode);
+    if (ferror (fptr)) {
+        return false;
+    }
+
+    g_Mode = temp_mode;
+
+    return true;
+
+}
+
 bool save_all() {
     if (!check_dir()) {
         return false;
@@ -42,6 +66,7 @@ bool save_all() {
         hero_save(file);
         time_save(file);
         map_save(file);
+        maps_local_save_all(file);
         fclose(file);
         return true;
     }
@@ -61,6 +86,7 @@ bool load_all() {
         hero_load(file);
         time_load(file);
         map_load(file);
+        maps_local_load_all(file);
         fclose(file);
         return true;
     }

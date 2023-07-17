@@ -61,6 +61,10 @@
 		</Unit>
 		<Unit filename="map.h" />
 		<Unit filename="map_gen.h" />
+		<Unit filename="map_local.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="map_local.h" />
 		<Unit filename="savegame.c">
 			<Option compilerVar="CC" />
 		</Unit>

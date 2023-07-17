@@ -13,9 +13,15 @@
 
 char get_cell_char(struct MapCell* _pCell) {
     /* non-explored map cells shown blank*/
-    if (!(_pCell->flags & EXPLORED_FLAG) && g_Debug) {
-        return ' ';
-    }
+    #ifdef DEBUG
+        if (!(_pCell->flags & EXPLORED_FLAG) && g_Debug) {
+            return ' ';
+        }
+    #else
+        if (!_pCell->flags & EXPLORED_FLAG) {
+            return ' ';
+        }
+    #endif // DEBUG
 
     switch (_pCell->type) {
     case ECT_PLAIN:

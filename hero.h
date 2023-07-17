@@ -8,6 +8,8 @@
 struct Hero {
     size_t map_x;
     size_t map_y;
+    size_t local_map_x;
+    size_t local_map_y;
 };
 
 struct Hero g_Hero;

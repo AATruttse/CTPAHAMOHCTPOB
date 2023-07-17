@@ -102,7 +102,7 @@ void hero_check_visibility() {
 }
 
 bool hero_save(FILE *fptr) {
-    fprintf(fptr, "%lu %lu\n", (unsigned long)g_Hero.map_x, (unsigned long)g_Hero.map_y);
+    fprintf(fptr, "%lu %lu %lu %lu\n", (unsigned long)g_Hero.map_x, (unsigned long)g_Hero.map_y, (unsigned long)g_Hero.local_map_x, (unsigned long)g_Hero.local_map_y);
     if (ferror (fptr)) {
         return false;
     }
@@ -111,14 +111,16 @@ bool hero_save(FILE *fptr) {
 }
 
 bool hero_load(FILE *fptr) {
-    unsigned long temp_x, temp_y;
-    fscanf(fptr, "%lu %lu\n", &temp_x, &temp_y);
+    unsigned long temp_x, temp_y, temp_local_x, temp_local_y;
+    fscanf(fptr, "%lu %lu %lu %lu\n", &temp_x, &temp_y, &temp_local_x, &temp_local_y);
     if (ferror (fptr)) {
         return false;
     }
 
     g_Hero.map_x = temp_x;
     g_Hero.map_y = temp_y;
+    g_Hero.local_map_x = temp_local_x;
+    g_Hero.local_map_y = temp_local_y;
 
     return true;
 }
