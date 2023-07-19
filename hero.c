@@ -87,7 +87,7 @@ void hero_global_step(enum E_DIR _dir) {
     g_Hero.map_x = target_x;
     g_Hero.map_y = target_y;
 
-    g_Hero.map_move_dir = _dir;
+    g_Hero.map_move_dir = (4 + (unsigned int)_dir) % 8;
 
     time_advance(1);
 }
