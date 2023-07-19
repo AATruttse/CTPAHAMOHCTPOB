@@ -55,16 +55,13 @@ void maps_local_init_all() {
         for (size_t j = 0; j < MAP_WIDTH; j++) {
             g_LocalMaps[i][j].x = j;
             g_LocalMaps[i][j].y = i;
-            // g_LocalMaps[i][j].type = g_Map[i][j].type;
-            // g_LocalMaps[i][j].hum = g_Map[i][j].hum;
-            // g_LocalMaps[i][j].flags = 0;
-
-            map_local_init(&g_Map[i][j], &g_LocalMaps[i][j]);
+            g_LocalMaps[i][j].is_generated = false;
         }
      }
 }
 
 void map_local_init(struct MapCell *_pMapCell, struct MapLocal *_pLocalMap){
+    _pLocalMap->is_generated = true;
     for (size_t i = 0; i < MAP_LOCAL_HEIGHT; i++) {
         for (size_t j = 0; j < MAP_LOCAL_WIDTH; j++) {
             _pLocalMap->cells[i][j].type = ELCT_PLAIN;

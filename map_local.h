@@ -14,6 +14,8 @@ struct MapLocalCell {
 };
 
 struct MapLocal {
+    bool                is_generated;
+
     size_t              x;
     size_t              y;
 

@@ -34,7 +34,7 @@ char* moon_phases_names[MOON_PHASES_NUM] = {
 };
 
 char* moon_names[MOON_NUM] = { "Heitmena, the White Moon", "Rauthmena, the Blood Moon", "Swartmena, the Black Moon" };
-double moon_periods[MOON_NUM] = { 29.5, 44.1, 77.7 };
+double moon_periods[MOON_NUM] = { 27.9, 44.1, 77.7 };
 double moon_phases[MOON_PHASES_NUM] = { 0.05, 0.2, 0.3, 0.45, 0.55, 0.7, 0.8, 0.95 };
 size_t moon_phases_limits[MOON_NUM][MOON_PHASES_NUM];
 

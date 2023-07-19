@@ -26,14 +26,18 @@ void init_all() {
     keypad(stdscr, TRUE);   // enable KEY_UP/KEY_DOWN/KEY_RIGHT/KEY_LEFT
     noecho();               // turn off the key echo
 
+#ifndef NOLOAD
     if (!load_all()) {
+#endif // NOLOAD
         g_Mode = EGM_MAP_GLOBAL;
 
         map_init();             // init map
         maps_local_init_all();  // init local maps
         hero_init();            // init hero
         time_init();            // init time
+#ifndef NOLOAD
     }
+#endif // NOLOAD
 
 }
 

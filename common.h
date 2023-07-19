@@ -2,6 +2,7 @@
 #define COMMON_H_INCLUDED
 
 #define DEBUG
+#define NOLOAD
 
 enum E_GAME_MODE {
     EGM_MAP_GLOBAL  = 0,
