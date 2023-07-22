@@ -1,3 +1,4 @@
+#include <locale.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -15,6 +16,9 @@
 #include "screen.h"
 
 void init_all() {
+
+    setlocale(LC_ALL, "en_GB");
+
     srand(time(0));         // init seed for rand
 
 #ifdef DEBUG

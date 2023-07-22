@@ -9,7 +9,7 @@ enum E_CellType forests[1] = {ECT_FOREST};
 enum E_CellType hills[1] = {ECT_HILL};
 enum E_CellType lakes_rivers[2] = {ECT_LAKE, ECT_RIVER};
 enum E_CellType not_mountains[4] = {ECT_PLAIN, ECT_HILL, ECT_FOREST, ECT_LOWLAND};
-enum E_CellType dry_types[3] = {ECT_PLAIN, ECT_HILL, ECT_LOWLAND};
+enum E_CellType dry_types[4] = {ECT_PLAIN, ECT_HILL, ECT_LOWLAND, ECT_FOREST};
 enum E_CellType swamp_types[3] = {ECT_PLAIN, ECT_FOREST, ECT_LOWLAND};
 
 enum E_CellHumidity normal[1] = {ECH_NORMAL};

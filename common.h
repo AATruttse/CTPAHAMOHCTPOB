@@ -42,14 +42,25 @@ enum E_CellHumidity {
     ECH_DRY         = 1,
     ECH_SWAMP       = 2,
     ECH_WATER       = 3,
-    ECH_SNOW        = 4
+    ECH_SNOW        = 4,
+    ECH_BURNED      = 5
 };
 
 enum E_LocalCellType {
-    ELCT_PLAIN      = 0,
-    ELCT_UNDERGROWTH = 10,
-    ELCT_TREE       = 50,
-    ELCT_TREE_W_UG  = 60
+    ELCT_NOGRASS        = 0,
+    ELCT_GRASS          = 10,
+    ELCT_L_UNDERGROWTH  = 20,
+    ELCT_H_UNDERGROWTH  = 30,
+    ELCT_TREE           = 40,
+    ELCT_B_TREE         = 50,
+    ELCT_TREE_FALLEN    = 60,
+    ELCT_B_TREE_FALLEN  = 70,
+    ELCT_SWAMP          = 80,
+    ELCT_SWAMP_DEEP     = 90,
+    ELCT_ROCK           = 100,
+    ELCT_RUBBLE         = 110,
+    ELCT_WATER          = 120,
+    ELCT_WATER_DEEP     = 130
 };
 
 enum E_MapLayers {
