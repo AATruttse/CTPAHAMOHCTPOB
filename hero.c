@@ -5,7 +5,7 @@
 #include "common.h"
 #include "daytime.h"
 #include "hero.h"
-#include "map.h"
+#include "map_global.h"
 #include "map_local.h"
 #include "screen.h"
 

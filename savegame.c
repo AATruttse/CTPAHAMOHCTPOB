@@ -7,7 +7,7 @@
 #include "daytime.h"
 #include "debug.h"
 #include "hero.h"
-#include "map.h"
+#include "map_global.h"
 #include "map_local.h"
 #include "savegame.h"
 
@@ -65,7 +65,7 @@ bool save_all() {
     {
         hero_save(file);
         time_save(file);
-        map_save(file);
+        map_global_save(file);
         maps_local_save_all(file);
         fclose(file);
         return true;
@@ -85,7 +85,7 @@ bool load_all() {
     {
         hero_load(file);
         time_load(file);
-        map_load(file);
+        map_global_load(file);
         maps_local_load_all(file);
         fclose(file);
         return true;

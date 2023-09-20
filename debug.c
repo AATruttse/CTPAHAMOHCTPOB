@@ -5,7 +5,7 @@
 
 #include "debug.h"
 #include "hero.h"
-#include "map.h"
+#include "map_global.h"
 #include "screen.h"
 
 #define LOG_FILE "ctpaha_monctrob.log"

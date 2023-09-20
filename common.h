@@ -4,6 +4,11 @@
 #define DEBUG
 #define NOLOAD
 
+#define CONFIG_PATH "./config/"
+#define LOG_PATH "./logs/"
+#define DEFAULT_LINE_LENGTH 255
+
+
 enum E_GAME_MODE {
     EGM_MAP_GLOBAL  = 0,
     EGM_MAP_LOCAL   = 10,
@@ -25,6 +30,10 @@ enum E_DIR {
     EDIR_NW    = 7
 };
 
+#define CELL_TYPES_NUM          9
+#define CELL_HUMIDITIES_NUM     7
+#define CELL_LOCAL_TYPES_NUM    14
+
 enum E_CellType {
     ECT_PLAIN       = 0,
     ECT_LOWLAND     = 10,
@@ -43,7 +52,8 @@ enum E_CellHumidity {
     ECH_SWAMP       = 2,
     ECH_WATER       = 3,
     ECH_SNOW        = 4,
-    ECH_BURNED      = 5
+    ECH_BURNED      = 5,
+    ECH_FIRE        = 6
 };
 
 enum E_LocalCellType {

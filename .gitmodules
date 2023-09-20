@@ -1,0 +1,3 @@
+[submodule "rxi_map"]
+	path = rxi_map
+	url = https://github.com/rxi/map

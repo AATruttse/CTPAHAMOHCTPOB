@@ -5,7 +5,7 @@
 
 #include "common.h"
 #include "debug.h"
-#include "map.h"
+#include "map_global.h"
 #include "map_gen.h"
 #include "screen.h"
 
@@ -59,6 +59,10 @@ short get_cell_color(struct MapCell* _pCell) {
         return _pCell->flags & VISIBLE_FLAG ? COLOR_BRIGHTBLUE : COLOR_BLUE;
     case ECH_SNOW:
         return _pCell->flags & VISIBLE_FLAG ? COLOR_BRIGHTWHITE : COLOR_WHITE;
+    case ECH_BURNED:
+        return COLOR_WHITE;
+    case ECH_FIRE:
+        return _pCell->flags & VISIBLE_FLAG ? COLOR_BRIGHTRED : COLOR_RED;
     }
 
     return COLOR_BLACK;
@@ -217,7 +221,7 @@ void map_place_spots() {
     }
 }
 
-void map_init() {
+void map_global_init() {
     unsigned int max_height = MAP_HEIGHT - 1;
     unsigned int max_width = MAP_WIDTH - 1;
 
@@ -251,7 +255,7 @@ void map_init() {
     map_place_spots();
 }
 
-void map_draw() {
+void map_global_draw() {
     for (size_t i = 0; i < MAP_HEIGHT; i++) {
         for (size_t j = 0; j < MAP_WIDTH; j++) {
             g_scrBuf[i + MAP_Y0][j + MAP_X0].ch = get_cell_char(&(g_Map[i][j]));
@@ -260,7 +264,7 @@ void map_draw() {
     }
 }
 
-bool map_save(FILE *fptr) {
+bool map_global_save(FILE *fptr) {
     char cell_char;
     for (size_t i = 0; i < MAP_HEIGHT; i++) {
         for (size_t j = 0; j < MAP_WIDTH; j++) {
@@ -277,7 +281,7 @@ bool map_save(FILE *fptr) {
     return true;
 }
 
-bool map_load(FILE *fptr) {
+bool map_global_load(FILE *fptr) {
     fgetc(fptr); //dirty hack - read last \n
 
     char cell_char;

@@ -10,7 +10,8 @@
 #include "debug.h"
 #include "hero.h"
 #include "mainloop.h"
-#include "map.h"
+#include "map_gen_local.h"
+#include "map_global.h"
 #include "map_local.h"
 #include "savegame.h"
 #include "screen.h"
@@ -35,14 +36,14 @@ void init_all() {
 #endif // NOLOAD
         g_Mode = EGM_MAP_GLOBAL;
 
-        map_init();             // init map
+        map_global_init();      // init map
         maps_local_init_all();  // init local maps
         hero_init();            // init hero
         time_init();            // init time
 #ifndef NOLOAD
     }
 #endif // NOLOAD
-
+    init_gen_map_local();
 }
 
 void uninit_all() {

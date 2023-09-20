@@ -2,7 +2,7 @@
 #define MAP_LOCAL_H_INCLUDED
 
 #include "common.h"
-#include "map.h"
+#include "map_global.h"
 
 #define MAP_LOCAL_WIDTH   MAP_WIDTH
 #define MAP_LOCAL_HEIGHT  MAP_HEIGHT

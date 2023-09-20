@@ -7,7 +7,7 @@
 #include "debug.h"
 #include "hero.h"
 #include "mainloop.h"
-#include "map.h"
+#include "map_global.h"
 #include "map_local.h"
 #include "savegame.h"
 #include "screen.h"
@@ -15,7 +15,7 @@
 void main_draw() {
 
     if (g_Mode == EGM_MAP_GLOBAL) {
-        map_draw();
+        map_global_draw();
     }
     else if (g_Mode == EGM_MAP_LOCAL) {
         map_local_draw(&g_LocalMaps[g_Hero.map_y][g_Hero.map_x]);

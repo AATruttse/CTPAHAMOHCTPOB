@@ -2,7 +2,7 @@
 #define MAP_GEN_H_INCLUDED
 
 #include "common.h"
-#include "map.h"
+#include "map_global.h"
 
 enum E_CellType plains[1] = {ECT_PLAIN};
 enum E_CellType forests[1] = {ECT_FOREST};
@@ -41,7 +41,7 @@ void place_mountain(struct MapCell* _pCell) { place_type(_pCell, ECT_MOUNTAIN); 
 void place_lake(struct MapCell* _pCell)     { place_type(_pCell, ECT_LAKE); place_humidity(_pCell, ECH_WATER); }
 void place_shoal(struct MapCell* _pCell)    { place_type(_pCell, ECT_SHOAL); place_humidity(_pCell, ECH_WATER); }
 
-struct MapSpotParams mapSpots[9] = {
+struct MapSpotParams mapSpots[CELL_TYPES_NUM] = {
     // forests
     { numSpots: 16, placeFunction: place_forest, chance: 67, sizeMin: 10, sizeMax: 100,
         typesRemoved_size:  sizeof(plains) / sizeof(enum E_CellType), typesRemoved: plains,
