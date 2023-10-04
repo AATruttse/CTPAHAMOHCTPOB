@@ -35,6 +35,9 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="common.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="common.h" />
 		<Unit filename="daytime.c">
 			<Option compilerVar="CC" />

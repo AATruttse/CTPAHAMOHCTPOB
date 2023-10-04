@@ -9,6 +9,7 @@
 #include "daytime.h"
 #include "debug.h"
 #include "hero.h"
+#include "logs.h"
 #include "mainloop.h"
 #include "map_gen_local.h"
 #include "map_global.h"
@@ -17,6 +18,8 @@
 #include "screen.h"
 
 void init_all() {
+    logs_init();            // init logs
+    logMessage("Starting init! #init");
 
     setlocale(LC_ALL, "en_GB");
 
@@ -40,16 +43,22 @@ void init_all() {
         maps_local_init_all();  // init local maps
         hero_init();            // init hero
         time_init();            // init time
+        init_gen_map_local();   // init local map generator
 #ifndef NOLOAD
-    }
+    } // if (!load_all())
+    logMessage("Init ok! #init");
 #endif // NOLOAD
-    init_gen_map_local();
-}
+} // void init_all()
 
 void uninit_all() {
+    logMessage("Starting uninit! #uninit");
+
     sc_uninit();            // uninit screen
     endwin();               // uninit curses
-}
+    logMessage("Uninit ok! #uninit");
+
+    logs_uninit();          // uninit logs
+} // void uninit_all()
 
 int main(int argc, char **argv)
 {
@@ -60,6 +69,6 @@ int main(int argc, char **argv)
     uninit_all();
 
     return 0;
-}
+} // int main(int argc, char **argv)
 
 

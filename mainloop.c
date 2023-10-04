@@ -6,6 +6,7 @@
 #include "daytime.h"
 #include "debug.h"
 #include "hero.h"
+#include "logs.h"
 #include "mainloop.h"
 #include "map_global.h"
 #include "map_local.h"
@@ -13,13 +14,14 @@
 #include "screen.h"
 
 void main_draw() {
+    logMessage("Start drawing! #draw");
 
     if (g_Mode == EGM_MAP_GLOBAL) {
         map_global_draw();
-    }
+    } // if (g_Mode == EGM_MAP_GLOBAL)
     else if (g_Mode == EGM_MAP_LOCAL) {
         map_local_draw(&g_LocalMaps[g_Hero.map_y][g_Hero.map_x]);
-    }
+    } // else if (g_Mode == EGM_MAP_LOCAL)
 
     hero_draw();
 
@@ -30,10 +32,12 @@ void main_draw() {
 #endif // DEBUG
 
     sc_flushBuf();
-}
+    logMessage("Drawing ok! #draw");
+} // void main_draw()
 
 bool loop_command() {
     int ch = getch();
+    logMessage("Get command %d('%c')! #command", ch, ch);
     switch (ch) {
         case KEY_UP:
         case KEY_A2:
@@ -78,20 +82,25 @@ bool loop_command() {
         case 'Q':
             return false;
             break;
-    }
+    } // switch (ch)
 
     return true;
-}
+} // bool loop_command()
 
 void main_checks() {
+    logMessage("Start checks! #checks");
     hero_check_visibility();
-}
+    logMessage("Checks ok! #checks");
+} // void main_checks()
 
 void main_loop() {
-    do {
+    do { // while (loop_command())
+        logMessage("Start loop! #loop");
+
         main_checks();
         main_draw();
 
         save_all();
+        logMessage("Loop ok! #loop");
     } while (loop_command());
-}
+} // void main_loop()

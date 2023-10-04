@@ -1,3 +1,4 @@
+#include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,13 +18,31 @@ FILE* fWarningPtr;
 FILE* fErrorPtr;
 FILE* fCriticalPtr;
 
-bool log_to_file_ptr(FILE* _fptr, const char *_fmt_msg, ...) {
-    fprintf(_fptr, _fmt_msg);
+bool log_to_file_ptr_va(FILE* _fptr, const char *_fmt_msg, va_list args) {
+    int len = vsnprintf(NULL, 0, _fmt_msg, args);
+
+    if (len < 0) {
+        return false;
+    } // if (len < 0)
+
+    char fmt_msg[len + 1];
+    vsnprintf(fmt_msg, len + 1, _fmt_msg, args);
+
+    fprintf(_fptr, "%s", fmt_msg);
+
     if (ferror (_fptr)) {
         return false;
     } // if (ferror (fptr))
 
     return true;
+} // log_to_file_ptr_va(FILE* _fptr, const char *_fmt_msg, va_list args)
+
+bool log_to_file_ptr(FILE* _fptr, const char *_fmt_msg, ...) {
+    va_list args;
+    va_start(args, _fmt_msg);
+    bool is_ok = log_to_file_ptr_va(_fptr, _fmt_msg, args);
+    va_end(args);
+    return is_ok;
 } // log_to_file(FILE* _fptr, const char *_fmt_msg, ...)
 
 FILE* open_log_file(const char *_fname) {
@@ -42,17 +61,20 @@ bool log_to_file(const char *_fname, const char *_fmt_msg, ...) {
     FILE* fptr = open_log_file(_fname);
     if (!fptr) { return false; }
 
-    if (!log_to_file_ptr(fptr, _fmt_msg)) {
+    va_list args;
+    va_start(args, _fmt_msg);
+    bool is_ok = log_to_file_ptr_va(fptr, _fmt_msg, args);
+    va_end(args);
+    fclose(fptr);
+
+    if (!is_ok) {
         eprintf("Can't write to file %s!\n", _fname);
-        fclose(fptr);
 #ifdef EXIT_ON_FILE_IO_ERROR
         exit(1);
 #endif // EXIT_ON_FILE_IO_ERROR
-        return false;
-    } // if (!log_to_file(_fname, _fmt_msg))
+    } // if (!is_ok)
 
-    fclose(fptr);
-    return true;
+    return is_ok;
 } // bool log_to_file(const char *_fname, const char *_fmt_msg, ...)
 
 void make_log_name(char* _buf, const char *_fname) {
@@ -145,44 +167,76 @@ void logs_uninit() {
 } // logs_uninit()
 
 bool logCritical(const char *_fmt_msg, ...) {
+    bool is_ok = true;
     eprintf(_fmt_msg);
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
-    return log_to_file_ptr(fCriticalPtr, "%02d:%02d:%02d %s - ", tm.tm_hour, tm.tm_min, tm.tm_sec, CRITICAL_STRING) && log_to_file_ptr(fCriticalPtr, _fmt_msg) && log_to_file_ptr(fCriticalPtr, "\n")
+    va_list args;
+    va_start(args, _fmt_msg);
+    is_ok &= log_to_file_ptr(fCriticalPtr, "%02d:%02d:%02d %s - ", tm.tm_hour, tm.tm_min, tm.tm_sec, CRITICAL_STRING);
+    is_ok &= log_to_file_ptr_va(fCriticalPtr, _fmt_msg, args);
+    is_ok &= log_to_file_ptr(fCriticalPtr, "\n");
 #ifdef LOG_MESSAGES
-        && (strcmp(CRITICAL_FNAME, MESSAGE_FNAME) ?
-             log_to_file_ptr(fMessagePtr, "%02d:%02d:%02d %s - ", tm.tm_hour, tm.tm_min, tm.tm_sec, CRITICAL_STRING) && log_to_file_ptr(fMessagePtr, _fmt_msg) && log_to_file_ptr(fMessagePtr, "\n") :
-             true)
-#endif // LOG_MESSAGES
-    ;
+    if (strcmp(CRITICAL_FNAME, MESSAGE_FNAME)) {
+        is_ok &= log_to_file_ptr(fMessagePtr, "%02d:%02d:%02d %s - ", tm.tm_hour, tm.tm_min, tm.tm_sec, CRITICAL_STRING);
+        is_ok &= log_to_file_ptr_va(fMessagePtr, _fmt_msg, args);
+        is_ok &= log_to_file_ptr(fMessagePtr, "\n");
+    }
+#endif // #ifdef LOG_MESSAGES
+    va_end(args);
+
+    return is_ok;
 } // logCritical(const char *_fmt_msg, ...)
 
 bool logError(const char *_fmt_msg, ...) {
+    bool is_ok = true;
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
-    return log_to_file_ptr(fErrorPtr, "%02d:%02d:%02d %s - ", tm.tm_hour, tm.tm_min, tm.tm_sec, ERROR_STRING) && log_to_file_ptr(fErrorPtr, _fmt_msg) && log_to_file_ptr(fErrorPtr, "\n")
+    va_list args;
+    va_start(args, _fmt_msg);
+    is_ok &= log_to_file_ptr(fErrorPtr, "%02d:%02d:%02d %s - ", tm.tm_hour, tm.tm_min, tm.tm_sec, ERROR_STRING);
+    is_ok &= log_to_file_ptr_va(fErrorPtr, _fmt_msg, args);
+    is_ok &= log_to_file_ptr(fErrorPtr, "\n");
 #ifdef LOG_MESSAGES
-        && (strcmp(CRITICAL_FNAME, MESSAGE_FNAME) ?
-             log_to_file_ptr(fMessagePtr, "%02d:%02d:%02d %s - ", tm.tm_hour, tm.tm_min, tm.tm_sec, ERROR_STRING) && log_to_file_ptr(fMessagePtr, _fmt_msg) && log_to_file_ptr(fMessagePtr, "\n") :
-             true)
-#endif // LOG_MESSAGES
-    ;
+    if (strcmp(ERROR_FNAME, MESSAGE_FNAME)) {
+        is_ok &= log_to_file_ptr(fMessagePtr, "%02d:%02d:%02d %s - ", tm.tm_hour, tm.tm_min, tm.tm_sec, ERROR_STRING);
+        is_ok &= log_to_file_ptr_va(fMessagePtr, _fmt_msg, args);
+        is_ok &= log_to_file_ptr(fMessagePtr, "\n");
+    }
+#endif // #ifdef LOG_MESSAGES
+    va_end(args);
+
+    return is_ok;
 } // logError(const char *_fmt_msg, ...)
 
 bool logWarning(const char *_fmt_msg, ...) {
+    bool is_ok = true;
 #ifdef LOG_WARNINGS
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
-    return log_to_file_ptr(fWarningPtr, "%02d:%02d:%02d %s - ", tm.tm_hour, tm.tm_min, tm.tm_sec, WARNING_STRING) && log_to_file_ptr(fWarningPtr, _fmt_msg) && log_to_file_ptr(fWarningPtr, "\n");
-#endif // LOG_WARNINGS
+    va_list args;
+    va_start(args, _fmt_msg);
+    is_ok &= log_to_file_ptr(fWarningPtr, "%02d:%02d:%02d %s - ", tm.tm_hour, tm.tm_min, tm.tm_sec, WARNING_STRING);
+    is_ok &= log_to_file_ptr_va(fWarningPtr, _fmt_msg, args);
+    is_ok &= log_to_file_ptr(fWarningPtr, "\n");
+    va_end(args);
+#endif // #ifdef LOG_WARNINGS
+    return is_ok;
 } // logWarning(const char *_fmt_msg, ...)
 
 bool logMessage(const char *_fmt_msg, ...) {
+    bool is_ok = true;
 #ifdef LOG_MESSAGES
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
-    return log_to_file_ptr(fMessagePtr, "%02d:%02d:%02d - ", tm.tm_hour, tm.tm_min, tm.tm_sec) && log_to_file_ptr(fMessagePtr, _fmt_msg) && log_to_file_ptr(fMessagePtr, "\n");
-#endif // LOG_MESSAGES
+    va_list args;
+    va_start(args, _fmt_msg);
+    is_ok &= log_to_file_ptr(fMessagePtr, "%02d:%02d:%02d - ", tm.tm_hour, tm.tm_min, tm.tm_sec);
+    is_ok &= log_to_file_ptr_va(fMessagePtr, _fmt_msg, args);
+    is_ok &= log_to_file_ptr(fMessagePtr, "\n");
+    va_end(args);
+#endif // #ifdef LOG_MESSAGES
+    return is_ok;
 } // logMessage(const char *_fmt_msg, ...)
 
 

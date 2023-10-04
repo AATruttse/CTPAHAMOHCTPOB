@@ -5,6 +5,7 @@
 #include "common.h"
 #include "daytime.h"
 #include "hero.h"
+#include "logs.h"
 #include "map_global.h"
 #include "map_local.h"
 #include "screen.h"
@@ -19,6 +20,8 @@
 /// Inits all variables for hero
 /////////////////////////////////////////////////
 void hero_init() {
+    logMessage("Hero init started! #init #hero");
+
     unsigned int shore_x1 = (MAP_WIDTH / 2) - 1;                 // left river's shore x coordinate
     unsigned int shore_x2 = shore_x1 + 3;                        // right river's shore x coordinate
 
@@ -28,7 +31,10 @@ void hero_init() {
     g_Hero.map_x = hero_x0;
     g_Hero.map_y = hero_y0;
 
+    logMessage("Hero starting place: (%d,%d)! #init #hero", g_Hero.map_x, g_Hero.map_y);
+
     hero_check_visibility();
+    logMessage("Hero init ok! #init #hero");
 }
 
 void hero_draw() {
@@ -79,15 +85,21 @@ void hero_global_step(enum E_DIR _dir) {
     }
 
     if (g_Map[target_y][target_x].type == ECT_MOUNTAIN) {
+        logMessage("Hero tried to step on global map from (%d,%d) to (%d,%d) but (%d,%d) is mountain! #hero", g_Hero.map_x, g_Hero.map_y, target_x, target_y, target_x, target_y );
         return;
     }
     if (g_Map[target_y][target_x].type == ECT_LAKE || g_Map[target_y][target_x].type == ECT_RIVER) {
+        logMessage("Hero tried to step on global map from (%d,%d) to (%d,%d) but (%d,%d) is water! #hero", g_Hero.map_x, g_Hero.map_y, target_x, target_y, target_x, target_y );
         return;
     }
+
+    g_Hero.map_move_dir = (4 + (unsigned int)_dir) % 8;
+
+    logMessage("Hero stepped on global map from (%d,%d) to (%d,%d). move_dir is %s.#hero", g_Hero.map_x, g_Hero.map_y, target_x, target_y, STR_DIR[g_Hero.map_move_dir] );
+
     g_Hero.map_x = target_x;
     g_Hero.map_y = target_y;
 
-    g_Hero.map_move_dir = (4 + (unsigned int)_dir) % 8;
 
     time_advance(1);
 }
@@ -128,6 +140,8 @@ void hero_local_step(enum E_DIR _dir) {
     default:
         break;
     }
+
+    logMessage("Hero stepped on local map from (%d,%d) to (%d,%d). #hero", g_Hero.local_map_x, g_Hero.local_map_y, target_x, target_y );
 
     g_Hero.local_map_x = target_x;
     g_Hero.local_map_y = target_y;
@@ -211,6 +225,8 @@ void hero_check_visibility() {
 }
 
 bool hero_save(FILE *fptr) {
+    logMessage("Hero save started! #save #hero");
+
     fprintf(fptr, "%lu %lu %lu %lu %lu\n",
             (unsigned long)g_Hero.map_x,
             (unsigned long)g_Hero.map_y,
@@ -219,16 +235,21 @@ bool hero_save(FILE *fptr) {
             (unsigned long)g_Hero.map_move_dir
             );
     if (ferror (fptr)) {
+        logError("Can't save hero! #save #hero #error");
         return false;
     }
 
+    logMessage("Hero save ok! #save #hero");
     return true;
 }
 
 bool hero_load(FILE *fptr) {
+    logMessage("Hero load started! #load #hero");
+
     unsigned long temp_x, temp_y, temp_local_x, temp_local_y, temp_move_dir;
     fscanf(fptr, "%lu %lu %lu %lu %lu\n", &temp_x, &temp_y, &temp_local_x, &temp_local_y, &temp_move_dir);
     if (ferror (fptr)) {
+        logError("Can't load hero! #load #hero #error");
         return false;
     }
 
@@ -238,6 +259,7 @@ bool hero_load(FILE *fptr) {
     g_Hero.local_map_y = temp_local_y;
     g_Hero.map_move_dir = temp_move_dir;
 
+    logMessage("Hero load ok! #load #hero");
     return true;
 }
 

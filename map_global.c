@@ -5,6 +5,7 @@
 
 #include "common.h"
 #include "debug.h"
+#include "logs.h"
 #include "map_global.h"
 #include "map_gen.h"
 #include "screen.h"
@@ -152,7 +153,7 @@ size_t map_place_spot(
         size_t _humRemoved_size,
         enum E_CellHumidity *_humRemoved
         ) {
-    //logprintf("map_place_spot started, type: %d, chance: %d, sizeMin: %d, sizeMax: %d", _type, _chance, (int)_sizeMin, (int)_sizeMax);
+    //logMessage("Global map place spot! #map");
 
     // we need to know which cells' types and humidities have to be removed
     if (_typesRemoved_size < 1 || _typesRemoved == NULL ||
@@ -222,6 +223,7 @@ void map_place_spots() {
 }
 
 void map_global_init() {
+    logMessage("Start global map init! #map #init");
     unsigned int max_height = MAP_HEIGHT - 1;
     unsigned int max_width = MAP_WIDTH - 1;
 
@@ -253,6 +255,7 @@ void map_global_init() {
     }
 
     map_place_spots();
+    logMessage("Global map init ok! #map #init");
 }
 
 void map_global_draw() {
@@ -265,23 +268,29 @@ void map_global_draw() {
 }
 
 bool map_global_save(FILE *fptr) {
+    logMessage("Starting global map save! #save #map");
+
     char cell_char;
     for (size_t i = 0; i < MAP_HEIGHT; i++) {
         for (size_t j = 0; j < MAP_WIDTH; j++) {
             cell_char = g_Map[i][j].type + g_Map[i][j].hum;
             if (fputc(cell_char, fptr) == EOF) {
+                logError("Can't save global map! #save #map #error");
                 return false;
             }
             if (fputc(g_Map[i][j].flags, fptr) == EOF) {
+                logError("Can't save global map! #save #map #error");
                 return false;
             }
         }
     }
 
+    logMessage("Global map save ok! #save #map");
     return true;
 }
 
 bool map_global_load(FILE *fptr) {
+    logMessage("Starting global map load! #load #map");
     fgetc(fptr); //dirty hack - read last \n
 
     char cell_char;
@@ -290,10 +299,12 @@ bool map_global_load(FILE *fptr) {
         for (size_t j = 0; j < MAP_WIDTH; j++) {
             cell_char = fgetc(fptr);
             if( feof(fptr) ) {
+                logError("Can't load global map! #load #map #error");
                 return false;
             }
             cell_flags = fgetc(fptr);
             if( feof(fptr) ) {
+                logError("Can't load global map! #load #map #error");
                 return false;
             }
             g_Map[i][j].type = 10*(cell_char / 10);
@@ -302,6 +313,7 @@ bool map_global_load(FILE *fptr) {
         }
     }
 
+    logMessage("Global map load ok! #load #map");
     return true;
 }
 

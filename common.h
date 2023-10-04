@@ -30,6 +30,8 @@ enum E_DIR {
     EDIR_NW    = 7
 };
 
+extern const char* STR_DIR[8];
+
 #define CELL_TYPES_NUM          9
 #define CELL_HUMIDITIES_NUM     7
 #define CELL_LOCAL_TYPES_NUM    14

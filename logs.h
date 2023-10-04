@@ -2,6 +2,7 @@
 #define LOGS_H_INCLUDED
 
 #include "common.h"
+#include "stdbool.h"
 
 #define EXIT_ON_FILE_IO_ERROR
 

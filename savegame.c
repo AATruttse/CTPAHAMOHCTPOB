@@ -7,6 +7,7 @@
 #include "daytime.h"
 #include "debug.h"
 #include "hero.h"
+#include "logs.h"
 #include "map_global.h"
 #include "map_local.h"
 #include "savegame.h"
@@ -18,11 +19,11 @@ bool check_dir() {
         return true;
     } else if (ENOENT == errno) {
         if (mkdir(SAVE_PATH)) {
-            eprintf("Unable to create directory %s\n", SAVE_PATH);
+            logCritical("Unable to create directory %s! #save #crit", SAVE_PATH);
             return false;
         }
     } else {
-        eprintf("Problem with directory %s\n", SAVE_PATH);
+        logCritical("Problem with directory %s! #save #crit", SAVE_PATH);
         return false;
     }
 
@@ -32,6 +33,7 @@ bool check_dir() {
 bool save_mode(FILE *fptr) {
     fprintf(fptr, "%lu\n", (unsigned long)g_Mode);
     if (ferror (fptr)) {
+        logCritical("Can't save mode! #save #crit");
         return false;
     }
 
@@ -42,6 +44,7 @@ bool load_mode(FILE *fptr) {
     unsigned long temp_mode;
     fscanf(fptr, "%lu\n", &temp_mode);
     if (ferror (fptr)) {
+        logCritical("Can't load mode! #load #crit");
         return false;
     }
 
@@ -52,6 +55,8 @@ bool load_mode(FILE *fptr) {
 }
 
 bool save_all() {
+    logMessage("Save started! #save");
+
     if (!check_dir()) {
         return false;
     }
@@ -68,14 +73,17 @@ bool save_all() {
         map_global_save(file);
         maps_local_save_all(file);
         fclose(file);
+        logMessage("Save game to file %s ok! #load", path);
         return true;
     }
 
-    eprintf("Can't save game to %s\n", SAVE_PATH);
+    logCritical("Can't save game to file %s! #save #crit", path);
     return false;
 }
 
 bool load_all() {
+    logMessage("Load started! #load");
+
     char path[255];
     strcpy(path, SAVE_PATH);
     strcat(path, SAVE_FILE);
@@ -88,8 +96,11 @@ bool load_all() {
         map_global_load(file);
         maps_local_load_all(file);
         fclose(file);
+        logMessage("Load game from file %s ok! #load", path);
         return true;
     }
+
+    logWarning("Can't load game from file %s! #load", path);
 
     return false;
 }

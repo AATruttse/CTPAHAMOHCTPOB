@@ -2,6 +2,7 @@
 
 #include "include/curses.h"
 
+#include "logs.h"
 #include "screen.h"
 
 short curs_color(int fg)
@@ -95,8 +96,10 @@ void sc_flushBuf() {
 }
 
 void sc_init() {
+    logMessage("Screen init started! #init #screen");
     if (has_colors() == FALSE) {
         endwin();
+        logCritical("Terminal does not support color! #init #screen #crit");
         puts("Your terminal does not support color");
         exit(1);
     }
@@ -112,9 +115,10 @@ void sc_init() {
             g_scrBuf[i][j].ch_color = COLOR_WHITE;
         }
     }
+    logMessage("Screen init ok! #init");
 }
 
 void sc_uninit() {
-
+    logMessage("Screen uninit ok! #uninit #screen");
 }
 
