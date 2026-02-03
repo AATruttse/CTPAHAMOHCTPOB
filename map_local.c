@@ -4,11 +4,16 @@
 
 #include "common.h"
 #include "debug.h"
+#include "hero.h"
+#include "map_gen_local.h"
 #include "map_global.h"
 #include "map_local.h"
 #include "screen.h"
 
 #define NUM_TRIES_TO_PLACE_SPOT 1000
+
+int g_LocalViewX0 = 0;
+int g_LocalViewY0 = 0;
 
 char get_local_cell_char(struct MapLocal *_pLocalMap, size_t _x, size_t _y) {
     /* non-explored map cells shown blank*/
@@ -18,7 +23,7 @@ char get_local_cell_char(struct MapLocal *_pLocalMap, size_t _x, size_t _y) {
             return ' ';
         }
     #else
-        if (!_pLocalMap->cells[_y][_x].flags & EXPLORED_FLAG) {
+        if (!(_pLocalMap->cells[_y][_x].flags & EXPLORED_FLAG)) {
             return ' ';
         }
     #endif // DEBUG
@@ -58,24 +63,72 @@ char get_local_cell_char(struct MapLocal *_pLocalMap, size_t _x, size_t _y) {
 }
 
 short get_local_cell_color(struct MapLocal *_pLocalMap, size_t _x, size_t _y) {
-    switch (g_Map[_pLocalMap->y][_pLocalMap->x].hum) {
-    case ECH_NORMAL:
-        return _pLocalMap->cells[_y][_x].flags & VISIBLE_FLAG ? COLOR_BRIGHTGREEN : COLOR_GREEN;
-    case ECH_DRY:
-        return _pLocalMap->cells[_y][_x].flags & VISIBLE_FLAG ? COLOR_BRIGHTYELLOW : COLOR_YELLOW;
-    case ECH_SWAMP:
-        return _pLocalMap->cells[_y][_x].flags & VISIBLE_FLAG ? COLOR_BRIGHTCYAN : COLOR_CYAN;
-    case ECH_WATER:
-        return _pLocalMap->cells[_y][_x].flags & VISIBLE_FLAG ? COLOR_BRIGHTBLUE : COLOR_BLUE;
-    case ECH_SNOW:
-        return _pLocalMap->cells[_y][_x].flags & VISIBLE_FLAG ? COLOR_BRIGHTWHITE : COLOR_WHITE;
-    case ECH_BURNED:
-        return COLOR_WHITE;
-    case ECH_FIRE:
-        return _pLocalMap->cells[_y][_x].flags & VISIBLE_FLAG ? COLOR_BRIGHTRED : COLOR_RED;
-    }
+    enum E_LocalCellType lct = _pLocalMap->cells[_y][_x].type;
+    enum E_CellHumidity hum = g_Map[_pLocalMap->y][_pLocalMap->x].hum;
+    int visible = (_pLocalMap->cells[_y][_x].flags & VISIBLE_FLAG) ? 1 : 0;
 
-    return COLOR_BLACK;
+    switch (lct) {
+    case ELCT_NOGRASS:
+        switch (hum) {
+        case ECH_SWAMP:  return visible ? COLOR_BRIGHTCYAN : COLOR_CYAN;
+        case ECH_SNOW:   return visible ? COLOR_BRIGHTWHITE : COLOR_WHITE;
+        case ECH_BURNED:
+        case ECH_FIRE:   return COLOR_GRAY;
+        default:         return visible ? COLOR_BRIGHTYELLOW : COLOR_YELLOW;
+        }
+    case ELCT_GRASS:
+        switch (hum) {
+        case ECH_NORMAL:
+        case ECH_WATER:  return visible ? COLOR_BRIGHTGREEN : COLOR_GREEN;
+        case ECH_DRY:    return visible ? COLOR_BRIGHTYELLOW : COLOR_YELLOW;
+        case ECH_SWAMP:  return visible ? COLOR_BRIGHTCYAN : COLOR_CYAN;
+        case ECH_SNOW:   return visible ? COLOR_BRIGHTWHITE : COLOR_WHITE;
+        case ECH_BURNED:
+        case ECH_FIRE:   return COLOR_GRAY;
+        default:         return visible ? COLOR_BRIGHTGREEN : COLOR_GREEN;
+        }
+    case ELCT_L_UNDERGROWTH:
+    case ELCT_H_UNDERGROWTH:
+    case ELCT_TREE:
+    case ELCT_B_TREE:
+        switch (hum) {
+        case ECH_NORMAL:
+        case ECH_WATER:
+        case ECH_SWAMP:  return visible ? COLOR_BRIGHTGREEN : COLOR_GREEN;
+        case ECH_DRY:    return visible ? COLOR_BRIGHTYELLOW : COLOR_YELLOW;
+        case ECH_SNOW:   return visible ? COLOR_BRIGHTWHITE : COLOR_WHITE;
+        case ECH_BURNED:
+        case ECH_FIRE:   return COLOR_GRAY;
+        default:         return visible ? COLOR_BRIGHTGREEN : COLOR_GREEN;
+        }
+    case ELCT_TREE_FALLEN:
+    case ELCT_B_TREE_FALLEN:
+        switch (hum) {
+        case ECH_DRY:    return visible ? COLOR_BRIGHTYELLOW : COLOR_YELLOW;
+        case ECH_SNOW:   return visible ? COLOR_BRIGHTWHITE : COLOR_WHITE;
+        default:         return COLOR_GRAY;
+        }
+    case ELCT_SWAMP:
+    case ELCT_SWAMP_DEEP:
+        switch (hum) {
+        case ECH_DRY:    return visible ? COLOR_BRIGHTYELLOW : COLOR_YELLOW;
+        case ECH_SNOW:   return visible ? COLOR_BRIGHTWHITE : COLOR_WHITE;
+        default:         return visible ? COLOR_BRIGHTCYAN : COLOR_CYAN;
+        }
+    case ELCT_ROCK:
+        return (hum == ECH_DRY) ? (visible ? COLOR_BRIGHTYELLOW : COLOR_YELLOW) : COLOR_GRAY;
+    case ELCT_RUBBLE:
+        switch (hum) {
+        case ECH_DRY:    return visible ? COLOR_BRIGHTYELLOW : COLOR_YELLOW;
+        case ECH_SNOW:   return visible ? COLOR_BRIGHTWHITE : COLOR_WHITE;
+        default:         return COLOR_GRAY;
+        }
+    case ELCT_WATER:
+    case ELCT_WATER_DEEP:
+        return visible ? COLOR_BRIGHTBLUE : COLOR_BLUE;
+    default:
+        return COLOR_BLACK;
+    }
 }
 
 enum E_LocalCellType get_local_default_cell (struct MapLocal *_pLocalMap) {
@@ -185,8 +238,10 @@ size_t local_map_place_spot(
             return 0;
     }
 
-    // calculate spot's size
-    size_t size = _sizeMin + ( rand() % (_sizeMax + 1 - _sizeMin));
+    // calculate spot's size (guard against sizeMax < sizeMin to avoid underflow)
+    size_t size_range = (_sizeMax >= _sizeMin) ? (_sizeMax - _sizeMin + 1) : 1;
+    size_t size = _sizeMin + (rand() % size_range);
+    if (size < 1) size = 1;
 
     size_t cur_x, cur_y;
     size_t num_tries = 0;
@@ -203,7 +258,7 @@ size_t local_map_place_spot(
 
         num_tries++;
 
-    } while (!is_right_local_type(_pLocalMap->cells[cur_x][cur_y].type, _typesRemoved_size, _typesRemoved));
+    } while (!is_right_local_type(_pLocalMap->cells[cur_y][cur_x].type, _typesRemoved_size, _typesRemoved));
 
     size_t num_cells = 0;
     size_t num_fails = 0;
@@ -257,18 +312,37 @@ void maps_local_init_all() {
 
 void map_local_init(struct MapCell *_pMapCell, struct MapLocal *_pLocalMap){
     _pLocalMap->is_generated = true;
+    enum E_LocalCellType default_type = get_local_default_cell(_pLocalMap);
     for (size_t i = 0; i < MAP_LOCAL_HEIGHT; i++) {
         for (size_t j = 0; j < MAP_LOCAL_WIDTH; j++) {
-            _pLocalMap->cells[i][j].type = ELCT_GRASS;
+            _pLocalMap->cells[i][j].type = default_type;
+            _pLocalMap->cells[i][j].flags = 0;
         }
     }
+    apply_local_map_gen(_pMapCell, _pLocalMap);
 }
 
 void map_local_draw(struct MapLocal *_pLocalMap){
-    for (size_t i = 0; i < MAP_LOCAL_HEIGHT; i++) {
-        for (size_t j = 0; j < MAP_LOCAL_WIDTH; j++) {
-            g_scrBuf[i + MAP_Y0][j + MAP_X0].ch = get_local_cell_char(_pLocalMap, j, i);
-            g_scrBuf[i + MAP_Y0][j + MAP_X0].ch_color = get_local_cell_color(_pLocalMap, j, i);
+    int hx = (int)g_Hero.local_map_x;
+    int hy = (int)g_Hero.local_map_y;
+    /* Viewport: center hero; clamp when near border so we don't show out-of-bounds */
+    int max_x0 = (int)MAP_LOCAL_WIDTH - MAP_WIDTH;
+    int max_y0 = (int)MAP_LOCAL_HEIGHT - MAP_HEIGHT;
+    if (max_x0 < 0) max_x0 = 0;
+    if (max_y0 < 0) max_y0 = 0;
+    g_LocalViewX0 = hx - MAP_WIDTH / 2;
+    g_LocalViewY0 = hy - MAP_HEIGHT / 2;
+    if (g_LocalViewX0 < 0) g_LocalViewX0 = 0;
+    if (g_LocalViewX0 > max_x0) g_LocalViewX0 = max_x0;
+    if (g_LocalViewY0 < 0) g_LocalViewY0 = 0;
+    if (g_LocalViewY0 > max_y0) g_LocalViewY0 = max_y0;
+
+    for (int i = 0; i < MAP_HEIGHT; i++) {
+        for (int j = 0; j < MAP_WIDTH; j++) {
+            size_t wy = (size_t)(g_LocalViewY0 + i);
+            size_t wx = (size_t)(g_LocalViewX0 + j);
+            g_scrBuf[i + MAP_Y0][j + MAP_X0].ch = get_local_cell_char(_pLocalMap, wx, wy);
+            g_scrBuf[i + MAP_Y0][j + MAP_X0].ch_color = get_local_cell_color(_pLocalMap, wx, wy);
         }
     }
 }

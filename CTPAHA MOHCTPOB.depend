@@ -1,0 +1,222 @@
+# depslib dependency file v1.0
+1686838456 source:d:\pers\programming\ctpaha mohctpob\screen.c
+	<stdlib.h>
+	"include/curses.h"
+	"screen.h"
+
+1686815464 source:d:\pers\programming\ctpaha mohctpob\main.c
+	<stdio.h>
+	<stdlib.h>
+	"include/curses.h"
+	"screen.h"
+
+1567591682 d:\pers\programming\ctpaha mohctpob\header\curses.h
+	<stdarg.h>
+	<stddef.h>
+	<stdio.h>
+	<wchar.h>
+	<stdbool.h>
+
+1686760746 d:\pers\programming\ctpaha mohctpob\header\screen.h
+
+1567591682 d:\pers\programming\ctpaha mohctpob\include\curses.h
+	<stdarg.h>
+	<stddef.h>
+	<stdio.h>
+	<wchar.h>
+	<stdbool.h>
+
+1686760746 d:\pers\programming\ctpaha mohctpob\screen.h
+
+1696013497 source:d:\pers\programming\ctpahamohctpob\main.c
+	<locale.h>
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	"include/curses.h"
+	"common.h"
+	"daytime.h"
+	"debug.h"
+	"hero.h"
+	"logs.h"
+	"mainloop.h"
+	"map_gen_local.h"
+	"map_global.h"
+	"map_local.h"
+	"savegame.h"
+	"screen.h"
+
+1567591682 d:\pers\programming\ctpahamohctpob\include\curses.h
+	<stdarg.h>
+	<stddef.h>
+	<stdio.h>
+	<wchar.h>
+	<stdbool.h>
+
+1687968414 d:\pers\programming\ctpahamohctpob\screen.h
+
+1695994264 source:d:\pers\programming\ctpahamohctpob\screen.c
+	<stdlib.h>
+	"include/curses.h"
+	"logs.h"
+	"screen.h"
+
+1691690939 source:d:\pers\programming\ctpahamohctpob\map.c
+	<stdio.h>
+	<stdlib.h>
+	"include/curses.h"
+	"common.h"
+	"debug.h"
+	"map.h"
+	"map_gen.h"
+	"screen.h"
+
+1688466219 d:\pers\programming\ctpahamohctpob\map.h
+	<stdbool.h>
+	<stdio.h>
+	"common.h"
+
+1686905974 d:\pers\programming\ctpahamohctpob\mainloop.h
+
+1696013757 source:d:\pers\programming\ctpahamohctpob\mainloop.c
+	<stdbool.h>
+	"include/curses.h"
+	"common.h"
+	"daytime.h"
+	"debug.h"
+	"hero.h"
+	"logs.h"
+	"mainloop.h"
+	"map_global.h"
+	"map_local.h"
+	"savegame.h"
+	"screen.h"
+
+1695995249 source:d:\pers\programming\ctpahamohctpob\hero.c
+	<stdlib.h>
+	"include/curses.h"
+	"common.h"
+	"daytime.h"
+	"hero.h"
+	"logs.h"
+	"map_global.h"
+	"map_local.h"
+	"screen.h"
+
+1689693941 d:\pers\programming\ctpahamohctpob\hero.h
+	<stdbool.h>
+	"common.h"
+
+1695995090 d:\pers\programming\ctpahamohctpob\common.h
+
+1688473718 d:\pers\programming\ctpahamohctpob\debug.h
+	<stdbool.h>
+	"common.h"
+
+1693403219 source:d:\pers\programming\ctpahamohctpob\debug.c
+	"common.h"
+	<stdio.h>
+	<stdlib.h>
+	"debug.h"
+	"hero.h"
+	"map_global.h"
+	"screen.h"
+
+1695995623 source:d:\pers\programming\ctpahamohctpob\daytime.c
+	<math.h>
+	<stdbool.h>
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+	"daytime.h"
+	"logs.h"
+	"screen.h"
+
+1688475560 d:\pers\programming\ctpahamohctpob\daytime.h
+	<stdbool.h>
+
+1693403276 d:\pers\programming\ctpahamohctpob\map_gen.h
+	"common.h"
+	"map_global.h"
+
+1696014181 source:d:\pers\programming\ctpahamohctpob\savegame.c
+	<dirent.h>
+	<errno.h>
+	<stdio.h>
+	<string.h>
+	"common.h"
+	"daytime.h"
+	"debug.h"
+	"hero.h"
+	"logs.h"
+	"map_global.h"
+	"map_local.h"
+	"savegame.h"
+
+1688472361 d:\pers\programming\ctpahamohctpob\savegame.h
+
+1693403219 d:\pers\programming\ctpahamohctpob\map_local.h
+	"common.h"
+	"map_global.h"
+
+1693403219 source:d:\pers\programming\ctpahamohctpob\map_local.c
+	<stdlib.h>
+	"include/curses.h"
+	"common.h"
+	"debug.h"
+	"map_global.h"
+	"map_local.h"
+	"screen.h"
+
+1693403182 d:\pers\programming\ctpahamohctpob\map_global.h
+	<stdbool.h>
+	<stdio.h>
+	"common.h"
+
+1693401307 source:d:\pers\programming\ctpahamohctpob\rxi_map\src\map.c
+	<stdlib.h>
+	<string.h>
+	"map.h"
+
+1693401307 d:\pers\programming\ctpahamohctpob\rxi_map\src\map.h
+	<string.h>
+
+1696419325 source:d:\pers\programming\ctpahamohctpob\map_global.c
+	<stdio.h>
+	<stdlib.h>
+	"include/curses.h"
+	"common.h"
+	"debug.h"
+	"logs.h"
+	"map_global.h"
+	"map_gen.h"
+	"screen.h"
+
+1696432988 source:d:\pers\programming\ctpahamohctpob\map_gen_local.c
+	<stdlib.h>
+	"logs.h"
+	"map_gen_local.h"
+
+1693817404 d:\pers\programming\ctpahamohctpob\map_gen_local.h
+	"rxi_map/src/map.h"
+	"common.h"
+	"map_local.h"
+
+1696013357 source:d:\pers\programming\ctpahamohctpob\logs.c
+	<stdarg.h>
+	<stdbool.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<time.h>
+	"common.h"
+	"debug.h"
+	"logs.h"
+
+1696419352 d:\pers\programming\ctpahamohctpob\logs.h
+	"common.h"
+	"stdbool.h"
+
+1695995090 source:d:\pers\programming\ctpahamohctpob\common.c
+	"common.h"
+

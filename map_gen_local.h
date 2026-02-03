@@ -36,4 +36,5 @@ map_pPlaceLocalFunction_t       g_PlaceLocalFunctions;
 map_map_map_LocalSpotParams_t   g_MapLocalSpotParams;
 
 void init_gen_map_local();
+void apply_local_map_gen(struct MapCell *_pMapCell, struct MapLocal *_pLocalMap);
 #endif // MAP_GEN_LOCAL_H_INCLUDED
