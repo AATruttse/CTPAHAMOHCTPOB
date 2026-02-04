@@ -63,6 +63,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="mainloop.h" />
+		<Unit filename="menu.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="menu.h" />
 		<Unit filename="map_gen.h" />
 		<Unit filename="map_gen_local.c">
 			<Option compilerVar="CC" />

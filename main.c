@@ -17,38 +17,36 @@
 #include "savegame.h"
 #include "screen.h"
 
+void init_game_fresh(void) {
+    g_Mode = EGM_MAP_GLOBAL;
+    map_global_init();
+    maps_local_init_all();
+    hero_init();
+    time_init();
+    init_gen_map_local();
+    logMessage("New game init ok! #init");
+}
+
 void init_all() {
-    logs_init();            // init logs
+    logs_init();
     logMessage("Starting init! #init");
 
     setlocale(LC_ALL, "en_GB");
-
-    srand(time(0));         // init seed for rand
+    srand((unsigned)time(0));
 
 #ifdef DEBUG
     g_Debug = true;
-#endif // DEBUG
+#endif
 
-    initscr();              // curses init
-    sc_init();              // init screen
-    keypad(stdscr, TRUE);   // enable KEY_UP/KEY_DOWN/KEY_RIGHT/KEY_LEFT
-    noecho();               // turn off the key echo
+    initscr();
+    sc_init();
+    keypad(stdscr, TRUE);
+    noecho();
 
-#ifndef NOLOAD
-    if (!load_all()) {
-#endif // NOLOAD
-        g_Mode = EGM_MAP_GLOBAL;
-
-        map_global_init();      // init map
-        maps_local_init_all();  // init local maps
-        hero_init();            // init hero
-        time_init();            // init time
-        init_gen_map_local();   // init local map generator
-#ifndef NOLOAD
-    } // if (!load_all())
+    g_Mode = EGM_START_MENU;
+    init_gen_map_local();
     logMessage("Init ok! #init");
-#endif // NOLOAD
-} // void init_all()
+}
 
 void uninit_all() {
     logMessage("Starting uninit! #uninit");

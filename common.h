@@ -10,6 +10,7 @@
 
 
 enum E_GAME_MODE {
+    EGM_START_MENU  = -1,
     EGM_MAP_GLOBAL  = 0,
     EGM_MAP_LOCAL   = 10,
     EGM_DUNGEON     = 20,

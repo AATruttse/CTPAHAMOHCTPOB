@@ -1,16 +1,21 @@
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "include/curses.h"
 
 #include "common.h"
 #include "debug.h"
 #include "hero.h"
+#include "logs.h"
 #include "map_gen_local.h"
 #include "map_global.h"
 #include "map_local.h"
+#include "savegame.h"
 #include "screen.h"
 
 #define NUM_TRIES_TO_PLACE_SPOT 1000
+#define LOCAL_MAP_FILE_MAGIC "LM01"
 
 int g_LocalViewX0 = 0;
 int g_LocalViewY0 = 0;
@@ -311,6 +316,12 @@ void maps_local_init_all() {
 }
 
 void map_local_init(struct MapCell *_pMapCell, struct MapLocal *_pLocalMap){
+    size_t my = _pLocalMap->y;
+    size_t mx = _pLocalMap->x;
+
+    if (map_local_load_from_file(my, mx))
+        return;
+
     _pLocalMap->is_generated = true;
     enum E_LocalCellType default_type = get_local_default_cell(_pLocalMap);
     for (size_t i = 0; i < MAP_LOCAL_HEIGHT; i++) {
@@ -320,6 +331,7 @@ void map_local_init(struct MapCell *_pMapCell, struct MapLocal *_pLocalMap){
         }
     }
     apply_local_map_gen(_pMapCell, _pLocalMap);
+    map_local_save_to_file(my, mx);
 }
 
 void map_local_draw(struct MapLocal *_pLocalMap){
@@ -347,12 +359,91 @@ void map_local_draw(struct MapLocal *_pLocalMap){
     }
 }
 
-bool map_local_save(FILE *_fptr, struct MapLocal *_pLocalMap){
+bool map_local_save_to_file(size_t map_y, size_t map_x) {
+    struct MapLocal *m = &g_LocalMaps[map_y][map_x];
+    if (!m->is_generated)
+        return true;
 
+    char path[SAVE_PATH_MAX + 32];
+    snprintf(path, sizeof(path), "%slocal_%zu_%zu.dat", g_SavePath, map_y, map_x);
+    FILE *f = fopen(path, "wb");
+    if (!f) {
+        logError("Cannot open local map file for write: %s #save", path);
+        return false;
+    }
+
+    if (fwrite(LOCAL_MAP_FILE_MAGIC, 1, 4, f) != 4) goto err;
+    if (fputc((int)(map_y & 0xff), f) == EOF) goto err;
+    if (fputc((int)(map_x & 0xff), f) == EOF) goto err;
+
+    for (size_t i = 0; i < MAP_LOCAL_HEIGHT; i++) {
+        for (size_t j = 0; j < MAP_LOCAL_WIDTH; j++) {
+            unsigned char t = (unsigned char)m->cells[i][j].type;
+            unsigned char fl = m->cells[i][j].flags;
+            if (fputc(t, f) == EOF) goto err;
+            if (fputc(fl, f) == EOF) goto err;
+        }
+    }
+    fclose(f);
+    logMessage("Saved local map %zu,%zu to %s #save", map_y, map_x, path);
+    return true;
+err:
+    fclose(f);
+    logError("Failed writing local map %s #save", path);
+    return false;
+}
+
+bool map_local_load_from_file(size_t map_y, size_t map_x) {
+    char path[SAVE_PATH_MAX + 32];
+    snprintf(path, sizeof(path), "%slocal_%zu_%zu.dat", g_SavePath, map_y, map_x);
+    FILE *f = fopen(path, "rb");
+    if (!f)
+        return false;
+
+    char magic[4];
+    if (fread(magic, 1, 4, f) != 4 || memcmp(magic, LOCAL_MAP_FILE_MAGIC, 4) != 0) {
+        fclose(f);
+        return false;
+    }
+    int fy = fgetc(f);
+    int fx = fgetc(f);
+    if (fy == EOF || fx == EOF || (size_t)fy != map_y || (size_t)fx != map_x) {
+        fclose(f);
+        return false;
+    }
+
+    struct MapLocal *m = &g_LocalMaps[map_y][map_x];
+    m->x = map_x;
+    m->y = map_y;
+    m->is_generated = true;
+
+    for (size_t i = 0; i < MAP_LOCAL_HEIGHT; i++) {
+        for (size_t j = 0; j < MAP_LOCAL_WIDTH; j++) {
+            int t = fgetc(f);
+            int fl = fgetc(f);
+            if (t == EOF || fl == EOF) {
+                fclose(f);
+                logError("Truncated local map file %s #load", path);
+                return false;
+            }
+            m->cells[i][j].type = (enum E_LocalCellType)(unsigned char)t;
+            m->cells[i][j].flags = (unsigned char)fl;
+        }
+    }
+    fclose(f);
+    logMessage("Loaded local map %zu,%zu from %s #load", map_y, map_x, path);
+    return true;
+}
+
+bool map_local_save(FILE *_fptr, struct MapLocal *_pLocalMap){
+    (void)_fptr;
+    (void)_pLocalMap;
     return true;
 }
 
 bool map_local_load(FILE *_fptr, struct MapLocal *_pLocalMap){
+    (void)_fptr;
+    (void)_pLocalMap;
     return true;
 }
 

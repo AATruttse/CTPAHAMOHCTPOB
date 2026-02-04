@@ -127,6 +127,7 @@ void hero_local_step(enum E_DIR _dir) {
     /* Stepping off the map returns to global map */
     if (target_x < 0 || target_x >= (int)MAP_LOCAL_WIDTH ||
         target_y < 0 || target_y >= (int)MAP_LOCAL_HEIGHT) {
+        map_local_save_to_file(g_Hero.map_y, g_Hero.map_x);
         logMessage("Hero left local map to global. #hero");
         g_Mode = EGM_MAP_GLOBAL;
         return;

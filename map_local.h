@@ -39,4 +39,8 @@ size_t local_map_place_spot(struct MapLocal *_pLocalMap,
 bool maps_local_save_all(FILE *fptr);
 bool maps_local_load_all(FILE *fptr);
 
+/* Save/load a single local map to/from the save directory (e.g. local_0_0.dat). */
+bool map_local_save_to_file(size_t map_y, size_t map_x);
+bool map_local_load_from_file(size_t map_y, size_t map_x);
+
 #endif // MAP_LOCAL_H_INCLUDED

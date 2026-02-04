@@ -10,32 +10,66 @@
 #include "mainloop.h"
 #include "map_global.h"
 #include "map_local.h"
+#include "menu.h"
 #include "savegame.h"
 #include "screen.h"
+
+extern void init_game_fresh(void);
 
 void main_draw() {
     logMessage("Start drawing! #draw");
 
+    if (g_Mode == EGM_START_MENU) {
+        /* Menu draws itself in menu_run */
+        return;
+    }
     if (g_Mode == EGM_MAP_GLOBAL) {
         map_global_draw();
-    } // if (g_Mode == EGM_MAP_GLOBAL)
-    else if (g_Mode == EGM_MAP_LOCAL) {
+    } else if (g_Mode == EGM_MAP_LOCAL) {
         map_local_draw(&g_LocalMaps[g_Hero.map_y][g_Hero.map_x]);
-    } // else if (g_Mode == EGM_MAP_LOCAL)
+    }
 
     hero_draw();
-
     time_draw();
 
 #ifdef DEBUG
     debug_draw();
-#endif // DEBUG
+#endif
 
     sc_flushBuf();
     logMessage("Drawing ok! #draw");
-} // void main_draw()
+}
 
 bool loop_command() {
+    if (g_Mode == EGM_START_MENU) {
+        char name_buf[SAVE_NAME_MAX];
+        char selected_path[SAVE_PATH_MAX];
+        enum MenuAction action = menu_run(name_buf, sizeof(name_buf),
+                                          selected_path, sizeof(selected_path));
+        if (action == MENU_ACTION_QUIT)
+            return false;
+        if (action == MENU_ACTION_NEW) {
+            if (create_save_dir_for_character(name_buf)) {
+                init_game_fresh();
+            }
+            return true;
+        }
+        if (action == MENU_ACTION_LOAD) {
+            set_save_path(selected_path);
+            if (load_all()) {
+                /* load_all already set g_Mode from file; ensure we're in game */
+                if (g_Mode != EGM_MAP_GLOBAL && g_Mode != EGM_MAP_LOCAL)
+                    g_Mode = EGM_MAP_GLOBAL;
+                /* If we loaded while in local map, init current local map from file or generate */
+                if (g_Mode == EGM_MAP_LOCAL)
+                    map_local_init(&g_Map[g_Hero.map_y][g_Hero.map_x],
+                        &g_LocalMaps[g_Hero.map_y][g_Hero.map_x]);
+            }
+            return true;
+        }
+        return true;
+    }
+
     int ch = getch();
     logMessage("Get command %d('%c')! #command", ch, ch);
     switch (ch) {
@@ -88,19 +122,21 @@ bool loop_command() {
 } // bool loop_command()
 
 void main_checks() {
+    if (g_Mode == EGM_START_MENU)
+        return;
     logMessage("Start checks! #checks");
     hero_check_visibility();
     logMessage("Checks ok! #checks");
-} // void main_checks()
+}
 
 void main_loop() {
-    do { // while (loop_command())
+    do {
         logMessage("Start loop! #loop");
-
         main_checks();
         main_draw();
 
-        save_all();
+        if (g_Mode != EGM_START_MENU)
+            save_all();
         logMessage("Loop ok! #loop");
     } while (loop_command());
-} // void main_loop()
+}
